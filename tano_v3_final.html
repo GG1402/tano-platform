@@ -1,0 +1,1780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TANO — PNG Land Justice Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@300;400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0908;--surface:#111009;--panel:#181510;--panel2:#1e1a12;
+  --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.04);
+  --white:#faf8f5;--muted:rgba(250,248,245,.5);--faint:rgba(250,248,245,.22);
+  --clay:#c4783a;--clay-l:#e0944a;--soil:#3a2218;
+  --gold:#e8a838;--gold-d:#7a5010;
+  --verify:#00cc88;--alert:#ff4444;--warn:#f0a030;
+  --teal:#00c4a0;--blue:#3a8fd0;
+}
+html,body{width:100%;min-height:100vh;background:var(--bg);color:var(--white);font-family:'Outfit',sans-serif;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.022'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:.6}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;height:50px;background:rgba(10,9,8,.97);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 1.25rem;gap:1rem;z-index:800;backdrop-filter:blur(12px)}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.12em;color:var(--clay);cursor:pointer;flex-shrink:0}
+.nav-district-wrap{display:flex;align-items:center;gap:.4rem;flex-shrink:0;border-left:1px solid var(--border);padding-left:1rem}
+.nav-district-wrap label{font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
+.nav-select{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--white);padding:3px 6px;font-family:'JetBrains Mono',monospace;font-size:.58rem;outline:none;cursor:pointer;max-width:130px}
+.nav-select option{background:var(--panel)}
+.nav-tabs{display:flex;gap:0;flex:1;overflow-x:auto;scrollbar-width:none}
+.nav-tabs::-webkit-scrollbar{display:none}
+.nav-tab{background:transparent;border:none;color:var(--muted);padding:8px 11px;font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:color .2s;border-bottom:2px solid transparent;flex-shrink:0}
+.nav-tab:hover{color:var(--white)}
+.nav-tab.active{color:var(--clay);border-bottom-color:var(--clay)}
+.nav-right{display:flex;align-items:center;gap:.6rem;flex-shrink:0}
+.lang-toggle{background:transparent;border:1px solid var(--border);color:var(--muted);padding:3px 8px;font-family:'JetBrains Mono',monospace;font-size:.55rem;cursor:pointer;letter-spacing:.06em;transition:.2s}
+.lang-toggle:hover{border-color:var(--clay);color:var(--clay)}
+.offline-dot{width:7px;height:7px;border-radius:50%;background:var(--verify);flex-shrink:0}
+.offline-dot.offline{background:var(--alert)}
+.offline-lbl{font-family:'JetBrains Mono',monospace;font-size:.52rem;color:var(--muted);letter-spacing:.05em}
+
+/* PAGES */
+.page{display:none;min-height:100vh;padding-top:50px}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.page.active .wrap{animation:fadeIn .35s ease both}
+
+/* WRAP */
+.wrap{max-width:1180px;margin:0 auto;padding:3rem 1.5rem}
+.sec-kicker{font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--clay);margin-bottom:.6rem}
+.sec-title{font-family:'DM Serif Display',serif;font-size:clamp(1.5rem,4vw,2.4rem);line-height:1.1;margin-bottom:.75rem}
+.sec-title em{font-style:italic;color:var(--clay)}
+.sec-desc{font-size:.88rem;color:var(--muted);line-height:1.72;max-width:660px;margin-bottom:1.5rem}
+
+/* COUNTDOWN BANNER */
+.countdown-banner{background:linear-gradient(135deg,rgba(196,120,58,.12),rgba(196,120,58,.04));border:1px solid rgba(196,120,58,.25);padding:1rem 1.5rem;display:flex;align-items:center;gap:2rem;flex-wrap:wrap;margin-bottom:2rem}
+.cd-label{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--clay)}
+.cd-units{display:flex;gap:1.5rem}
+.cd-unit{text-align:center}
+.cd-num{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.06em;color:var(--white);display:block;line-height:1}
+.cd-unit-lbl{font-family:'JetBrains Mono',monospace;font-size:.5rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.cd-msg{font-size:.82rem;color:var(--muted);line-height:1.6;flex:1}
+
+/* HERO */
+.hero{position:relative;min-height:88vh;display:flex;align-items:center;overflow:hidden}
+.hero-mesh{position:absolute;inset:0;background:radial-gradient(ellipse at 25% 40%,rgba(196,120,58,.09) 0%,transparent 55%),radial-gradient(ellipse at 75% 65%,rgba(0,196,160,.05) 0%,transparent 45%)}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse at 50% 50%,black 20%,transparent 80%)}
+.hero-inner{position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:4rem 1.5rem}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--clay);border:1px solid rgba(196,120,58,.25);padding:4px 11px;margin-bottom:1.5rem}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,9vw,6.5rem);letter-spacing:.04em;line-height:.92;color:var(--white);margin-bottom:.4rem}
+.hero-title em{display:block;font-family:'DM Serif Display',serif;font-size:clamp(.9rem,2.2vw,1.45rem);font-style:italic;color:var(--muted);letter-spacing:normal;margin-top:.5rem;line-height:1.45}
+.hero-sub{max-width:540px;font-size:.88rem;color:var(--muted);line-height:1.72;margin:1.25rem 0 1.75rem}
+.hero-stats{display:flex;gap:1.75rem;flex-wrap:wrap;padding:1rem 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:1.75rem}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;letter-spacing:.06em;color:var(--clay);display:block}
+.stat-lbl{font-family:'JetBrains Mono',monospace;font-size:.52rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.hero-actions{display:flex;gap:.6rem;flex-wrap:wrap}
+
+/* BUTTONS */
+.btn{padding:9px 18px;font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:.2s;border:1px solid transparent}
+.btn-clay{background:var(--clay);color:#000;border-color:var(--clay)}
+.btn-clay:hover{background:var(--clay-l)}
+.btn-outline{background:transparent;color:var(--white);border-color:rgba(255,255,255,.2)}
+.btn-outline:hover{border-color:var(--clay);color:var(--clay)}
+.btn-teal{background:rgba(0,196,160,.1);color:var(--teal);border-color:rgba(0,196,160,.25)}
+.btn-teal:hover{background:rgba(0,196,160,.18)}
+.btn-ghost{background:transparent;color:var(--muted);border-color:var(--border)}
+.btn-ghost:hover{color:var(--white);border-color:rgba(255,255,255,.3)}
+.btn-sm{padding:5px 12px;font-size:.56rem}
+.btn-print{background:rgba(232,168,56,.08);color:var(--gold);border:1px solid rgba(232,168,56,.2);padding:5px 12px;font-family:'JetBrains Mono',monospace;font-size:.56rem;cursor:pointer;transition:.2s}
+.btn-print:hover{background:rgba(232,168,56,.16)}
+
+/* FORMS */
+.form-card{background:var(--panel);border:1px solid var(--border);padding:1.75rem}
+.form-head{font-family:'DM Serif Display',serif;font-size:1.2rem;margin-bottom:.2rem}
+.form-sub{font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--clay);letter-spacing:.1em;text-transform:uppercase;margin-bottom:1.1rem}
+.field{margin-bottom:.875rem}
+.label{font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.35rem}
+.input,.select,.textarea{width:100%;background:rgba(255,255,255,.03);border:1px solid var(--border);color:var(--white);padding:8px 11px;font-family:'Outfit',sans-serif;font-size:.85rem;outline:none;transition:border-color .2s}
+.input:focus,.select:focus,.textarea:focus{border-color:rgba(196,120,58,.45)}
+.input::placeholder,.textarea::placeholder{color:var(--faint)}
+.select option{background:var(--panel)}
+.textarea{resize:vertical;min-height:75px}
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:.875rem}
+.row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.875rem}
+.info-box{background:rgba(0,196,160,.05);border:1px solid rgba(0,196,160,.12);padding:.75rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.6rem;color:rgba(0,196,160,.7);line-height:1.65;margin-bottom:1rem}
+.warn-box{background:rgba(255,68,68,.05);border:1px solid rgba(255,68,68,.2);padding:.75rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.6rem;color:rgba(255,100,100,.8);line-height:1.65;margin:.875rem 0}
+.eligibility-result{padding:1rem 1.25rem;border:1px solid;margin-top:.875rem;display:none}
+.er-eligible{border-color:rgba(0,204,136,.3);background:rgba(0,204,136,.06);color:var(--verify)}
+.er-ineligible{border-color:rgba(255,68,68,.3);background:rgba(255,68,68,.06);color:var(--alert)}
+.er-future{border-color:rgba(240,160,48,.3);background:rgba(240,160,48,.06);color:var(--warn)}
+
+/* DASHBOARD CARDS */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:2px;margin-bottom:1.5rem}
+.dash-card{background:var(--panel);border:1px solid var(--border);padding:1.25rem;position:relative}
+.dash-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.dc-clay::before{background:var(--clay)}.dc-teal::before{background:var(--teal)}
+.dc-red::before{background:var(--alert)}.dc-gold::before{background:var(--gold)}
+.dc-green::before{background:var(--verify)}.dc-blue::before{background:var(--blue)}
+.dash-num{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:.04em;color:var(--white);display:block;line-height:1}
+.dash-label{font-family:'JetBrains Mono',monospace;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:.2rem}
+.dash-sub{font-size:.74rem;color:var(--muted);margin-top:.4rem;line-height:1.55}
+
+/* MODULE CARDS (Home) */
+.module-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:2px;margin-top:1.5rem}
+.mod-card{background:var(--panel);border:1px solid var(--border);padding:1.5rem;cursor:pointer;transition:border-color .2s,background .2s;position:relative}
+.mod-card:hover{border-color:rgba(196,120,58,.35);background:rgba(196,120,58,.03)}
+.mod-icon{font-size:1.4rem;margin-bottom:.6rem;display:block}
+.mod-title{font-family:'DM Serif Display',serif;font-size:1rem;margin-bottom:.35rem}
+.mod-desc{font-size:.78rem;color:var(--muted);line-height:1.6}
+.mod-arrow{position:absolute;top:1.25rem;right:1.25rem;color:var(--border);font-size:.8rem;transition:.2s}
+.mod-card:hover .mod-arrow{color:var(--clay)}
+
+/* TABLES */
+.data-table{width:100%;border-collapse:collapse;font-size:.82rem}
+.data-table th{font-family:'JetBrains Mono',monospace;font-size:.54rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:.625rem 1rem;background:rgba(255,255,255,.025);border-bottom:1px solid var(--border);text-align:left}
+.data-table td{padding:.75rem 1rem;border-bottom:1px solid var(--border2);vertical-align:top;line-height:1.5;color:var(--muted)}
+.data-table td strong{color:var(--white)}
+.data-table tr:hover td{background:rgba(255,255,255,.015)}
+.tbl-wrap{background:var(--surface);border:1px solid var(--border)}
+
+/* STATUS BADGES */
+.badge{font-family:'JetBrains Mono',monospace;font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border:1px solid}
+.badge-ok{color:var(--verify);border-color:rgba(0,204,136,.25);background:rgba(0,204,136,.05)}
+.badge-warn{color:var(--warn);border-color:rgba(240,160,48,.25);background:rgba(240,160,48,.05)}
+.badge-bad{color:var(--alert);border-color:rgba(255,68,68,.25);background:rgba(255,68,68,.05)}
+.badge-gap{color:var(--muted);border-color:var(--border);background:rgba(255,255,255,.03)}
+.badge-founding{color:var(--gold);border-color:rgba(232,168,56,.25);background:rgba(232,168,56,.05)}
+
+/* PAGE TABS */
+.ptabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:1.5rem;overflow-x:auto;scrollbar-width:none}
+.ptabs::-webkit-scrollbar{display:none}
+.ptab{background:transparent;border:none;color:var(--muted);padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:color .2s;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;flex-shrink:0}
+.ptab:hover{color:var(--white)}
+.ptab.active{color:var(--clay);border-bottom-color:var(--clay)}
+.ptab-panel{display:none}
+.ptab-panel.active{display:block}
+
+/* VOTER FAQ */
+.faq-item{border-bottom:1px solid var(--border2)}
+.faq-q{width:100%;background:transparent;border:none;color:var(--white);text-align:left;padding:.875rem 0;font-size:.88rem;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:1rem;font-family:'Outfit',sans-serif}
+.faq-arrow{color:var(--clay);flex-shrink:0;transition:transform .2s;font-size:.7rem}
+.faq-q.open .faq-arrow{transform:rotate(180deg)}
+.faq-a{display:none;padding:0 0 .875rem;font-size:.85rem;color:var(--muted);line-height:1.75}
+.faq-a.show{display:block}
+
+/* QUESTION PANEL */
+.q-panel{background:var(--surface);border:1px solid rgba(196,120,58,.18);overflow:hidden;margin-top:1.5rem}
+.q-panel-head{background:rgba(196,120,58,.06);border-bottom:1px solid rgba(196,120,58,.12);padding:.875rem 1.25rem;display:flex;align-items:center;gap:.75rem}
+.q-panel-title{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--clay);letter-spacing:.1em;text-transform:uppercase;flex:1}
+.q-messages{padding:1.1rem 1.25rem;min-height:160px;max-height:360px;overflow-y:auto;display:flex;flex-direction:column;gap:.75rem}
+.q-msg{display:flex;gap:.625rem;align-items:flex-start}
+.q-msg.user{flex-direction:row-reverse}
+.q-avatar{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.6rem;flex-shrink:0}
+.q-avatar.bot{background:rgba(196,120,58,.12);color:var(--clay);border:1px solid rgba(196,120,58,.2)}
+.q-avatar.user{background:var(--soil);color:var(--clay)}
+.q-bubble{background:var(--panel);border:1px solid var(--border);padding:.65rem .9rem;font-size:.82rem;line-height:1.65;max-width:88%;color:rgba(250,248,245,.85)}
+.q-msg.user .q-bubble{background:rgba(196,120,58,.07);border-color:rgba(196,120,58,.18)}
+.q-typing{display:flex;gap:4px;padding:.65rem .9rem;background:var(--panel);border:1px solid var(--border);align-items:center;width:56px}
+.q-typing span{width:4px;height:4px;border-radius:50%;background:var(--clay);animation:typing 1.2s ease infinite}
+.q-typing span:nth-child(2){animation-delay:.2s}
+.q-typing span:nth-child(3){animation-delay:.4s}
+@keyframes typing{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+.quick-q{display:flex;gap:.35rem;flex-wrap:wrap;padding:.625rem 1.25rem;border-top:1px solid var(--border2)}
+.qq{background:rgba(255,255,255,.03);border:1px solid var(--border);color:var(--muted);padding:3px 9px;font-family:'JetBrains Mono',monospace;font-size:.55rem;cursor:pointer;transition:.2s}
+.qq:hover{border-color:var(--clay);color:var(--clay)}
+.q-input-row{border-top:1px solid var(--border2);padding:.875rem 1.25rem;display:flex;gap:.6rem}
+.q-input{flex:1;background:rgba(255,255,255,.03);border:1px solid var(--border);color:var(--white);padding:8px 11px;font-family:'Outfit',sans-serif;font-size:.82rem;outline:none;transition:border-color .2s}
+.q-input:focus{border-color:rgba(196,120,58,.4)}
+.q-input::placeholder{color:var(--faint)}
+.q-send{background:rgba(196,120,58,.12);border:1px solid rgba(196,120,58,.22);color:var(--clay);padding:8px 14px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:.6rem;transition:.2s}
+.q-send:hover{background:rgba(196,120,58,.2)}
+.q-send:disabled{opacity:.4;cursor:not-allowed}
+
+/* EMERGENCY CONTACTS */
+.ec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:2px;margin-top:1.25rem}
+.ec-card{background:var(--panel);border:1px solid var(--border);padding:1.25rem;border-left:3px solid var(--clay)}
+.ec-name{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.06em;color:var(--clay);margin-bottom:.2rem}
+.ec-full{font-size:.78rem;color:var(--muted);margin-bottom:.5rem}
+.ec-role{font-size:.8rem;color:rgba(250,248,245,.7);line-height:1.55;margin-bottom:.625rem}
+.ec-contacts{display:flex;flex-direction:column;gap:.25rem}
+.ec-contact{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--teal)}
+
+/* MEMBER FEED */
+.member-feed{background:var(--surface);border:1px solid var(--border);max-height:320px;overflow-y:auto}
+.member-item{padding:.7rem 1rem;border-bottom:1px solid var(--border2);display:grid;grid-template-columns:28px 1fr auto;gap:.625rem;align-items:center}
+.member-avatar{width:28px;height:28px;background:var(--soil);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:.9rem;color:var(--clay);flex-shrink:0}
+.member-name{font-size:.82rem;font-weight:500}
+.member-meta{font-family:'JetBrains Mono',monospace;font-size:.54rem;color:var(--muted)}
+.member-hash{font-family:'JetBrains Mono',monospace;font-size:.5rem;color:var(--verify)}
+
+/* ILG / FRAUD ROWS */
+.tbl-row-click{cursor:pointer;transition:background .2s}
+.tbl-row-click:hover td{background:rgba(255,255,255,.025) !important}
+
+/* SABL ALERT */
+.sabl-alert{background:rgba(255,136,0,.06);border:1px solid rgba(255,136,0,.25);padding:.875rem 1.1rem;margin-bottom:.875rem;display:flex;gap:.75rem;align-items:flex-start}
+.sabl-icon{font-size:1.1rem;flex-shrink:0}
+.sabl-title{font-size:.85rem;font-weight:600;color:#ff8800;margin-bottom:.2rem}
+.sabl-desc{font-size:.78rem;color:var(--muted);line-height:1.6}
+
+/* VAULT */
+.vault-drop{border:1px dashed rgba(250,248,245,.1);padding:2.5rem 2rem;text-align:center;cursor:pointer;transition:.3s;background:var(--surface);margin-bottom:1.5rem;position:relative}
+.vault-drop:hover,.vault-drop.drag-over{border-color:var(--clay);background:rgba(196,120,58,.03)}
+.vault-drop input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.vault-form{background:var(--panel);border:1px solid var(--border);padding:1.75rem;margin-bottom:1.5rem;display:none}
+.vault-form.show{display:block}
+.vault-entry{background:var(--surface);padding:1.1rem 1.25rem;display:grid;grid-template-columns:36px 1fr auto;gap:1rem;align-items:center;cursor:pointer;transition:background .2s;border-bottom:1px solid var(--border2)}
+.vault-entry:hover{background:var(--panel)}
+.vault-ficon{width:36px;height:36px;background:var(--panel);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+.vault-fname{font-size:.82rem;font-weight:500;margin-bottom:2px}
+.vault-fmeta{font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--muted)}
+.vault-fhash{font-family:'JetBrains Mono',monospace;font-size:.54rem;color:var(--verify);text-align:right;line-height:1.65}
+
+/* COVENANT */
+.cov-card{background:var(--panel);border:1px solid var(--border);padding:1.5rem;margin-bottom:2px}
+.cov-card.signed{border-left:3px solid var(--verify)}
+.cov-card.declined{border-left:3px solid var(--alert)}
+.cov-card.pending{border-left:3px solid var(--warn)}
+.cov-name{font-family:'DM Serif Display',serif;font-size:1.05rem;margin-bottom:.2rem}
+.cov-role{font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--muted);margin-bottom:.75rem}
+.cov-obligation{display:flex;align-items:flex-start;gap:.5rem;font-size:.8rem;color:var(--muted);margin-bottom:.35rem}
+.ob-box{width:14px;height:14px;border:1px solid;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:.52rem;flex-shrink:0;margin-top:2px}
+.ob-met{border-color:var(--verify);color:var(--verify);background:rgba(0,204,136,.08)}
+.ob-unmet{border-color:var(--alert);color:var(--alert);background:rgba(255,68,68,.06)}
+.ob-na{border-color:var(--border);color:var(--muted)}
+
+/* DEMAND ITEM */
+.demand-row{background:var(--panel);border:1px solid var(--border);padding:1.1rem 1.25rem;margin-bottom:2px;display:grid;grid-template-columns:auto 1fr auto;gap:.875rem;align-items:center}
+.demand-ref{font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--clay)}
+.demand-title{font-size:.85rem;font-weight:500;margin-bottom:.15rem}
+.demand-meta{font-family:'JetBrains Mono',monospace;font-size:.54rem;color:var(--muted)}
+.deadline-ok{color:var(--verify)}
+.deadline-warn{color:var(--warn)}
+.deadline-bad{color:var(--alert)}
+
+/* DAO */
+.prop-card{background:var(--panel);border:1px solid var(--border);padding:1.25rem;margin-bottom:2px}
+.prop-id{font-family:'JetBrains Mono',monospace;font-size:.56rem;color:var(--clay);margin-bottom:.4rem}
+.prop-title{font-size:.92rem;font-weight:600;margin-bottom:.4rem}
+.prop-desc{font-size:.8rem;color:var(--muted);line-height:1.65;margin-bottom:.875rem}
+.vote-bar{height:5px;background:rgba(255,255,255,.06);margin-bottom:.25rem;position:relative;overflow:hidden}
+.vote-yes-fill{height:100%;background:var(--verify);position:absolute;left:0}
+.vote-no-fill{height:100%;background:var(--alert);position:absolute;right:0}
+.btn-yes{background:rgba(0,204,136,.08);color:var(--verify);border:1px solid rgba(0,204,136,.2);padding:5px 14px;font-family:'JetBrains Mono',monospace;font-size:.58rem;cursor:pointer;transition:.2s}
+.btn-yes:hover{background:rgba(0,204,136,.16)}
+.btn-no{background:rgba(255,68,68,.08);color:var(--alert);border:1px solid rgba(255,68,68,.2);padding:5px 14px;font-family:'JetBrains Mono',monospace;font-size:.58rem;cursor:pointer;transition:.2s}
+.btn-no:hover{background:rgba(255,68,68,.16)}
+
+/* PRINT RECEIPT */
+.receipt{background:var(--white);color:#111;padding:1.5rem;font-family:'Courier New',monospace;font-size:.72rem;line-height:1.8;display:none}
+.receipt.show{display:block}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--panel);border:1px solid;padding:.75rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.65rem;z-index:1000;transform:translateY(60px);opacity:0;transition:.3s;display:flex;align-items:center;gap:8px;max-width:320px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{border-color:var(--verify);color:var(--verify)}
+.toast.error{border-color:var(--alert);color:var(--alert)}
+.toast.info{border-color:var(--clay);color:var(--clay)}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border2);padding:2rem 1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.875rem;max-width:1180px;margin:0 auto}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--border)}
+.footer-copy{font-family:'JetBrains Mono',monospace;font-size:.54rem;color:rgba(250,248,245,.15);letter-spacing:.05em}
+.footer-rfi{font-family:'JetBrains Mono',monospace;font-size:.54rem;color:rgba(196,120,58,.25);letter-spacing:.04em}
+
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-thumb{background:var(--clay)}
+@media(max-width:720px){
+  .row-2,.row-3{grid-template-columns:1fr}
+  nav .nav-tabs{display:none}
+  .hero-stats{gap:1.1rem}
+}
+</style>
+</head>
+<body>
+
+<div id="toast" class="toast"></div>
+
+<!-- PRINT AREA -->
+<div id="print-area" style="display:none;position:fixed;inset:0;background:#fff;z-index:9999;padding:2rem;overflow:auto">
+  <div style="max-width:600px;margin:0 auto">
+    <div id="print-content" style="font-family:'Courier New',monospace;font-size:.8rem;line-height:1.9;color:#111"></div>
+    <div style="display:flex;gap:.75rem;margin-top:1.5rem">
+      <button onclick="window.print()" style="background:#111;color:#fff;border:none;padding:8px 18px;cursor:pointer;font-family:monospace">PRINT</button>
+      <button onclick="document.getElementById('print-area').style.display='none'" style="background:transparent;border:1px solid #ccc;padding:8px 18px;cursor:pointer;font-family:monospace">CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">TANO</div>
+  <div class="nav-district-wrap">
+    <label>District</label>
+    <select class="nav-select" id="g-district" onchange="DB.set('district',this.value);refreshAll()">
+      <option value="all">All CP</option>
+      <option value="Rigo District">Rigo</option>
+      <option value="Abau District">Abau</option>
+      <option value="Goilala District">Goilala</option>
+      <option value="Hiri-Koiari District">Hiri-Koiari</option>
+      <option value="Kairuku District">Kairuku</option>
+    </select>
+  </div>
+  <div class="nav-tabs" id="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('home',this)">Home</button>
+    <button class="nav-tab" onclick="showPage('register',this)">👤 Register</button>
+    <button class="nav-tab" onclick="showPage('voter',this)">🗳️ Voter Rights</button>
+    <button class="nav-tab" onclick="showPage('land',this)">📋 Land Registry</button>
+    <button class="nav-tab" onclick="showPage('mp',this)">⚖️ MP Record</button>
+    <button class="nav-tab" onclick="showPage('covenant',this)">📜 Covenant</button>
+    <button class="nav-tab" onclick="showPage('demands',this)">📨 Demands</button>
+    <button class="nav-tab" onclick="showPage('governance',this)">🏛️ Governance</button>
+    <button class="nav-tab" onclick="showPage('evidence',this)">🔒 Evidence</button>
+  </div>
+  <div class="nav-right">
+    <button class="lang-toggle" id="lang-btn" onclick="toggleLang()">TP</button>
+    <div class="offline-dot" id="offline-dot"></div>
+    <div class="offline-lbl" id="offline-lbl">Online</div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════ HOME ═══════════════════════════ -->
+<div class="page active" id="page-home">
+<div class="hero">
+  <div class="hero-mesh"></div><div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-badge">Land Justice Platform · Central Province, PNG</div>
+    <h1 class="hero-title">TANO<em>Eda Tano Aita Goadalia — Our Land Is Not For Sale</em></h1>
+    <p class="hero-sub">A complete civic platform for land justice, voter rights, and governance accountability across all five districts of Central Province — Abau, Goilala, Hiri-Koiari, Kairuku, and Rigo.</p>
+    <div class="hero-stats">
+      <div><span class="stat-num" id="h-members">0</span><span class="stat-lbl">Members Registered</span></div>
+      <div><span class="stat-num" id="h-cases">0</span><span class="stat-lbl">Land Cases Filed</span></div>
+      <div><span class="stat-num" id="h-docs">0</span><span class="stat-lbl">Documents Sealed</span></div>
+      <div><span class="stat-num" id="h-demands">0</span><span class="stat-lbl">Demands Filed</span></div>
+      <div><span class="stat-num" id="h-wards">0</span><span class="stat-lbl">Wards Verified</span></div>
+    </div>
+    <div class="hero-actions">
+      <button class="btn btn-clay" onclick="showPage('register')">Register Now</button>
+      <button class="btn btn-outline" onclick="showPage('voter')">Know Your Rights</button>
+      <button class="btn btn-teal" onclick="showPage('land')">Land Registry</button>
+    </div>
+  </div>
+</div>
+<div class="wrap">
+  <!-- Countdown -->
+  <div class="countdown-banner" id="countdown-banner">
+    <div>
+      <div class="cd-label">2027 Election Countdown</div>
+      <div class="cd-units" id="cd-units">
+        <div class="cd-unit"><span class="cd-num" id="cd-d">—</span><div class="cd-unit-lbl">Days</div></div>
+        <div class="cd-unit"><span class="cd-num" id="cd-h">—</span><div class="cd-unit-lbl">Hours</div></div>
+        <div class="cd-unit"><span class="cd-num" id="cd-m">—</span><div class="cd-unit-lbl">Minutes</div></div>
+      </div>
+    </div>
+    <div class="cd-msg">The 2027 National General Elections will open the next chapter for Rigo District. The community roll must be verified, candidates must sign the covenant, and DDA acquittal demands must be filed — before writs are issued. Every week of delay is a ward unverified, a vote uncounted, a promise unaccountable.</div>
+  </div>
+  <!-- Modules -->
+  <div class="sec-kicker">Platform Modules</div>
+  <h2 class="sec-title">Everything in <em>one place</em></h2>
+  <div class="module-grid">
+    <div class="mod-card" onclick="showPage('register')"><span class="mod-icon">👤</span><div class="mod-title">Community Register</div><div class="mod-desc">Register yourself — name, district, LLG, ward, clan, voter eligibility check. Build the community database that makes everything else possible.</div><div class="mod-arrow">→</div></div>
+    <div class="mod-card" onclick="showPage('voter')"><span class="mod-icon">🗳️</span><div class="mod-title">Voter Rights & Awareness</div><div class="mod-desc">Know your rights. Understand LPV. Check enrollment. Report roll anomalies. Ask any question about the 2027 election.</div><div class="mod-arrow">→</div></div>
+    <div class="mod-card" onclick="showPage('land')"><span class="mod-icon">📋</span><div class="mod-title">Land Registry</div><div class="mod-desc">Register your ILG, file land fraud cases, track SABL threats over Central Province customary land.</div><div class="mod-arrow">→</div></div>
+    <div class="mod-card" onclick="showPage('mp')"><span class="mod-icon">⚖️</span><div class="mod-title">MP Accountability</div><div class="mod-desc">The complete parliamentary record for Rigo Open 1972–2026. DDA acquittal tracker. Development promise register.</div><div class="mod-arrow">→</div></div>
+    <div class="mod-card" onclick="showPage('covenant')"><span class="mod-icon">📜</span><div class="mod-title">Candidate Covenant</div><div class="mod-desc">Who signed. What they committed to. Whether they are delivering after election. Permanently public.</div><div class="mod-arrow">→</div></div>
+    <div class="mod-card" onclick="showPage('demands')"><span class="mod-icon">📨</span><div class="mod-title">Document Demands</div><div class="mod-desc">Section 51 document demands filed, deadlines tracked, responses — and silences — published publicly.</div><div class="mod-arrow">→</div></div>
+    <div class="mod-card" onclick="showPage('governance')"><span class="mod-icon">🏛️</span><div class="mod-title">Community Governance</div><div class="mod-desc">Community proposals, collective voting, and decisions for Rigo District. Every vote recorded permanently.</div><div class="mod-arrow">→</div></div>
+    <div class="mod-card" onclick="showPage('evidence')"><span class="mod-icon">🔒</span><div class="mod-title">Evidence Vault</div><div class="mod-desc">Cryptographically sealed documents. Once stored, no individual or government office can alter or delete your record.</div><div class="mod-arrow">→</div></div>
+  </div>
+  <!-- Emergency contacts teaser -->
+  <div style="margin-top:2.5rem">
+    <div class="sec-kicker">Emergency Contacts</div>
+    <h2 class="sec-title">Need <em>help now?</em></h2>
+    <div class="ec-grid" id="home-ec"></div>
+  </div>
+</div>
+<footer><div class="footer-logo">TANO</div><div class="footer-copy">© 2026 TANO · PNG Land Justice Platform · Central Province</div><div class="footer-rfi">Produced by Rigo Think Tank (RFI)</div></footer>
+</div>
+
+<!-- ═══════════════════════════ REGISTER ═══════════════════════════ -->
+<div class="page" id="page-register">
+<div class="wrap">
+  <div class="sec-kicker">Module 01 — Community Register</div>
+  <h2 class="sec-title">Register <em>Yourself</em></h2>
+  <p class="sec-desc">Every person who registers builds the community database that drives the 67-ward verification, the voter eligibility tracker, and the land justice network. Your record is permanent, verified, and cannot be removed.</p>
+
+  <div class="ptabs">
+    <button class="ptab active" onclick="PT('reg','form',this)">Register</button>
+    <button class="ptab" onclick="PT('reg','members',this)">Members</button>
+    <button class="ptab" onclick="PT('reg','wards',this)">Ward Data</button>
+    <button class="ptab" onclick="PT('reg','rollcheck',this)">Roll Anomalies</button>
+  </div>
+
+  <!-- REGISTER FORM -->
+  <div class="ptab-panel active" id="reg-form">
+    <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:1.5rem">
+      <div class="form-card">
+        <div class="form-head">Personal Details</div>
+        <div class="form-sub">Permanent · Verified · Cannot Be Removed</div>
+        <div class="info-box" id="reg-chain-info">Once registered, a cryptographic hash is generated from your entry. Your record cannot be altered by any individual, government office, or future administration.</div>
+        <div class="row-2">
+          <div class="field"><label class="label">First Name *</label><input class="input" id="r-fname" placeholder="First name"></div>
+          <div class="field"><label class="label">Last Name *</label><input class="input" id="r-lname" placeholder="Last name"></div>
+        </div>
+        <div class="row-2">
+          <div class="field"><label class="label">Date of Birth *</label><input class="input" type="date" id="r-dob" onchange="checkEligibility()"></div>
+          <div class="field"><label class="label">Sex</label>
+            <select class="select" id="r-sex"><option>Prefer not to say</option><option>Male</option><option>Female</option></select>
+          </div>
+        </div>
+        <div id="eligibility-result" class="eligibility-result"><!-- JS --></div>
+        <div class="field"><label class="label">District *</label>
+          <select class="select" id="r-district" onchange="populateLLG('r')">
+            <option value="">Select district</option>
+          </select>
+        </div>
+        <div class="field"><label class="label">LLG *</label>
+          <select class="select" id="r-llg" onchange="populateWard('r')" disabled>
+            <option value="">Select LLG</option>
+          </select>
+        </div>
+        <div class="field"><label class="label">Ward / Village *</label>
+          <select class="select" id="r-ward" disabled>
+            <option value="">Select ward</option>
+          </select>
+        </div>
+        <div class="row-2">
+          <div class="field"><label class="label">Clan Name</label><input class="input" id="r-clan" placeholder="Your clan or family name"></div>
+          <div class="field"><label class="label">ILG Name (if any)</label><input class="input" id="r-ilg" placeholder="ILG name"></div>
+        </div>
+        <div class="field"><label class="label">Enrollment Status</label>
+          <select class="select" id="r-enrolled">
+            <option>Enrolled on common roll</option>
+            <option>Not yet enrolled</option>
+            <option>Unknown — need to check</option>
+            <option>Tried to enroll but had problems</option>
+          </select>
+        </div>
+        <div class="field"><label class="label">Contact (optional)</label><input class="input" id="r-contact" placeholder="Phone number"></div>
+        <div class="field"><label class="label">Sign the Land Justice Petition</label>
+          <select class="select" id="r-petition"><option value="yes">Yes — I support the petition</option><option value="no">No</option></select>
+        </div>
+        <div class="field"><label class="label">Additional Notes</label><textarea class="textarea" id="r-notes" placeholder="Anything else you want on the record — land concerns, roll problems, community issues"></textarea></div>
+        <button class="btn btn-clay" onclick="submitRegister()" style="width:100%;margin-top:.25rem" id="reg-btn">Register →</button>
+      </div>
+      <div>
+        <div class="dash-card dc-clay" style="margin-bottom:2px"><span class="dash-num" id="reg-total">0</span><div class="dash-label">Total Members Registered</div></div>
+        <div class="card-grid" style="grid-template-columns:1fr 1fr;margin-bottom:1.5rem">
+          <div class="dash-card dc-teal"><span class="dash-num" id="reg-eligible">0</span><div class="dash-label">Eligible 2027</div></div>
+          <div class="dash-card dc-gold"><span class="dash-num" id="reg-enrolled">0</span><div class="dash-label">Confirmed Enrolled</div></div>
+          <div class="dash-card dc-red"><span class="dash-num" id="reg-unenrolled">0</span><div class="dash-label">Need to Enroll</div></div>
+          <div class="dash-card dc-blue"><span class="dash-num" id="reg-wards-rep">0</span><div class="dash-label">Wards Represented</div></div>
+        </div>
+        <div class="sec-kicker">Recent Registrations</div>
+        <div class="member-feed" id="member-feed">
+          <div style="padding:1.5rem;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--muted)">No members registered yet.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEMBERS LIST -->
+  <div class="ptab-panel" id="reg-members">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--muted)"><span id="mem-count">0</span> members registered</div>
+      <button class="btn-print" onclick="printMemberList()">🖨 Print List</button>
+    </div>
+    <div class="tbl-wrap">
+      <table class="data-table" style="width:100%">
+        <thead><tr><th>Name</th><th>District</th><th>Ward</th><th>Clan</th><th>Eligibility</th><th>Enrolled</th><th>Hash</th></tr></thead>
+        <tbody id="members-table-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- WARD DATA -->
+  <div class="ptab-panel" id="reg-wards">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+      <div class="form-card">
+        <div class="form-head">Submit Ward Population Data</div>
+        <div class="form-sub">Community-verified estimates</div>
+        <div class="field"><label class="label">District *</label>
+          <select class="select" id="w-district" onchange="populateLLG('w')"><option value="">Select district</option></select>
+        </div>
+        <div class="field"><label class="label">LLG *</label>
+          <select class="select" id="w-llg" onchange="populateWard('w')" disabled><option value="">Select LLG</option></select>
+        </div>
+        <div class="field"><label class="label">Ward *</label>
+          <select class="select" id="w-ward" disabled><option value="">Select ward</option></select>
+        </div>
+        <div class="row-3">
+          <div class="field"><label class="label">Est. Population *</label><input class="input" type="number" id="w-pop" placeholder="e.g. 450"></div>
+          <div class="field"><label class="label">Est. Adults 18+</label><input class="input" type="number" id="w-adults" placeholder="e.g. 220"></div>
+          <div class="field"><label class="label">Common Roll Count</label><input class="input" type="number" id="w-enrolled" placeholder="If known"></div>
+        </div>
+        <div class="field"><label class="label">Ward Recorder Name (if known)</label><input class="input" id="w-recorder" placeholder="Government-appointed Ward Recorder"></div>
+        <div class="field"><label class="label">Notes / Source</label><textarea class="textarea" id="w-notes" placeholder="How was this estimated? Church records, school roll, community count..."></textarea></div>
+        <button class="btn btn-clay" onclick="submitWard()" style="width:100%;margin-top:.25rem">Submit Ward Data →</button>
+      </div>
+      <div>
+        <div class="sec-kicker">Ward Verification Status</div>
+        <div class="card-grid" style="grid-template-columns:1fr 1fr;margin-bottom:1rem">
+          <div class="dash-card dc-teal"><span class="dash-num" id="w-verified">0</span><div class="dash-label">Wards Verified</div></div>
+          <div class="dash-card dc-red"><span class="dash-num" id="w-gap">0</span><div class="dash-label">Roll Gap Found</div></div>
+        </div>
+        <div class="tbl-wrap">
+          <table class="data-table">
+            <thead><tr><th>Ward</th><th>Pop.</th><th>Est. Eligible</th><th>Enrolled</th><th>Gap</th></tr></thead>
+            <tbody id="ward-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROLL ANOMALIES -->
+  <div class="ptab-panel" id="reg-rollcheck">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+      <div class="form-card">
+        <div class="form-head">Report Roll Anomaly</div>
+        <div class="form-sub">Public Record · Cannot Be Removed</div>
+        <div class="field"><label class="label">District *</label>
+          <select class="select" id="ra-district" onchange="populateLLG('ra')"><option value="">Select district</option></select>
+        </div>
+        <div class="field"><label class="label">LLG</label>
+          <select class="select" id="ra-llg" onchange="populateWard('ra')" disabled><option value="">Select LLG</option></select>
+        </div>
+        <div class="field"><label class="label">Ward *</label>
+          <select class="select" id="ra-ward" disabled><option value="">Select ward</option></select>
+        </div>
+        <div class="field"><label class="label">Type of Anomaly *</label>
+          <select class="select" id="ra-type">
+            <option value="">Select type</option>
+            <option>Eligible voter missing from roll</option>
+            <option>Deceased person still on roll</option>
+            <option>Name appears multiple times</option>
+            <option>Wrong ward or address</option>
+            <option>Large population vs roll discrepancy</option>
+            <option>Ward Recorder not active</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field"><label class="label">Description *</label><textarea class="textarea" id="ra-desc" placeholder="Describe what you found. Include names, numbers, specific details."></textarea></div>
+        <div class="row-2">
+          <div class="field"><label class="label">People Affected (est.)</label><input class="input" type="number" id="ra-affected"></div>
+          <div class="field"><label class="label">Your Contact</label><input class="input" id="ra-contact" placeholder="Optional"></div>
+        </div>
+        <button class="btn btn-clay" onclick="submitRollAnomaly()" style="width:100%;margin-top:.25rem">Submit Report →</button>
+      </div>
+      <div>
+        <div class="sec-kicker">Anomaly Reports</div>
+        <div id="anomaly-list"><div style="padding:1.5rem;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--muted);background:var(--surface);border:1px solid var(--border)">No anomalies reported yet.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════ VOTER RIGHTS ═══════════════════════════ -->
+<div class="page" id="page-voter">
+<div class="wrap">
+  <div class="sec-kicker">Module 02 — Voter Rights & Awareness</div>
+  <h2 class="sec-title">Know Your <em>Rights</em></h2>
+  <p class="sec-desc">Your rights on polling day, how preferential voting works, how to check your enrollment, and what to do if something is wrong. Read the answers below — or ask any question.</p>
+
+  <div class="ptabs">
+    <button class="ptab active" onclick="PT('vtr','faq',this)">Your Rights</button>
+    <button class="ptab" onclick="PT('vtr','lpv',this)">How LPV Works</button>
+    <button class="ptab" onclick="PT('vtr','enroll',this)">Enrollment Steps</button>
+    <button class="ptab" onclick="PT('vtr','recorders',this)">Ward Recorders</button>
+    <button class="ptab" onclick="PT('vtr','contacts',this)">Help & Contacts</button>
+  </div>
+
+  <!-- FAQ -->
+  <div class="ptab-panel active" id="vtr-faq">
+    <div id="faq-list"></div>
+    <!-- Question panel -->
+    <div style="margin-top:2rem">
+      <div class="sec-kicker">Have a Question?</div>
+      <h3 style="font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:.5rem">Ask <em>anything</em> about the 2027 election</h3>
+      <p style="font-size:.85rem;color:var(--muted);margin-bottom:.875rem">Type your question below. Ask in English or Tok Pisin.</p>
+      <div class="q-panel">
+        <div class="q-panel-head"><div class="q-panel-title">Land &amp; Voter Rights — Help</div></div>
+        <div class="q-messages" id="q-msgs-voter">
+          <div class="q-msg"><div class="q-avatar bot">T</div><div class="q-bubble">Good day. Ask me anything about the 2027 election — your rights, how to enroll, how preferential voting works, or what to do if your name is missing from the roll. You can ask in English or Tok Pisin.</div></div>
+        </div>
+        <div class="quick-q">
+          <button class="qq" onclick="askQ('voter','Am I eligible to vote in 2027?')">Am I eligible?</button>
+          <button class="qq" onclick="askQ('voter','How do I check if I am on the common roll?')">Check enrollment</button>
+          <button class="qq" onclick="askQ('voter','How does preferential voting work?')">How LPV works</button>
+          <button class="qq" onclick="askQ('voter','My name is missing from the roll — what do I do?')">Name missing</button>
+          <button class="qq" onclick="askQ('voter','Wanem ol rait bilong mi long de bilong vot?')">Tok Pisin: Ol rait bilong mi</button>
+        </div>
+        <div class="q-input-row">
+          <input class="q-input" id="q-in-voter" placeholder="Ask about voting, enrollment, your rights..." onkeydown="if(event.key==='Enter')askQ('voter',this.value)">
+          <button class="q-send" onclick="askQ('voter',document.getElementById('q-in-voter').value)">SEND →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LPV EXPLAINER -->
+  <div class="ptab-panel" id="vtr-lpv">
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:.875rem">How Preferential Voting Works — Step by Step</h3>
+    <div style="display:flex;flex-direction:column;gap:2px;margin-bottom:1.5rem">
+      <div style="background:var(--panel);border:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;gap:1rem;align-items:flex-start">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--clay);flex-shrink:0;line-height:1;width:32px">1</div>
+        <div><div style="font-weight:600;margin-bottom:.25rem">You vote for up to 3 candidates</div><div style="font-size:.82rem;color:var(--muted);line-height:1.65">Write 1 next to your first choice, 2 next to your second choice, 3 next to your third choice. You do not have to use all three — but using all three gives your vote maximum strength.</div></div>
+      </div>
+      <div style="background:var(--panel);border:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;gap:1rem;align-items:flex-start">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--clay);flex-shrink:0;line-height:1;width:32px">2</div>
+        <div><div style="font-weight:600;margin-bottom:.25rem">Counting eliminates candidates one by one</div><div style="font-size:.82rem;color:var(--muted);line-height:1.65">The candidate with the fewest votes is eliminated first. Their ballots move to whichever candidate was marked 2nd on each ballot. This continues until one candidate has more than half the remaining votes.</div></div>
+      </div>
+      <div style="background:var(--panel);border:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;gap:1rem;align-items:flex-start">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--clay);flex-shrink:0;line-height:1;width:32px">3</div>
+        <div><div style="font-weight:600;margin-bottom:.25rem">Your vote is never wasted</div><div style="font-size:.82rem;color:var(--muted);line-height:1.65">Even if your first-choice candidate is eliminated, your vote moves to your second choice. Your voice continues to count through every round of counting.</div></div>
+      </div>
+      <div style="background:rgba(196,120,58,.06);border:1px solid rgba(196,120,58,.2);padding:1.1rem 1.25rem;display:flex;gap:1rem;align-items:flex-start">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--clay);flex-shrink:0;line-height:1;width:32px">★</div>
+        <div><div style="font-weight:600;margin-bottom:.25rem;color:var(--clay)">The 2027 Rigo Strategy</div><div style="font-size:.82rem;color:var(--muted);line-height:1.65">If two strong candidates both sign the Rigo Candidate Covenant and agree to exchange second preferences — voters for Candidate A put Candidate B as 2nd, and vice versa — then when the lower-placed candidate is eliminated, their votes flow to the other. This mathematically breaks the split-vote pattern that has repeatedly returned the same incumbent.</div></div>
+      </div>
+    </div>
+    <button class="btn btn-outline btn-sm" onclick="askQ('voter','Can you explain the Rigo 2027 preferential voting strategy in more detail?')">Ask more about the 2027 strategy →</button>
+  </div>
+
+  <!-- ENROLLMENT STEPS -->
+  <div class="ptab-panel" id="vtr-enroll">
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:.875rem">How to Enroll — Step by Step</h3>
+    <div class="warn-box">The enrollment deadline for 2027 has not been officially announced. Do not wait. Enroll now. The Electoral Commission typically closes the roll 4 months before election day.</div>
+    <div style="display:flex;flex-direction:column;gap:2px;margin-bottom:1.5rem">
+      <div style="background:var(--panel);border:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;gap:1rem">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--clay);flex-shrink:0;line-height:1;width:32px">1</div>
+        <div><div style="font-weight:600;margin-bottom:.25rem">Find your Ward Recorder</div><div style="font-size:.82rem;color:var(--muted);line-height:1.65">Your Ward Recorder is the government-appointed person responsible for your ward's common roll. They are your first point of contact for enrollment. Check the Ward Recorder Directory tab on this page, or contact the Rigo DDA or PNGEC if you do not know who yours is.</div></div>
+      </div>
+      <div style="background:var(--panel);border:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;gap:1rem">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--clay);flex-shrink:0;line-height:1;width:32px">2</div>
+        <div><div style="font-weight:600;margin-bottom:.25rem">Gather proof of identity</div><div style="font-size:.82rem;color:var(--muted);line-height:1.65">Birth certificate, baptism certificate, or a statutory declaration witnessed by a Village Court Magistrate, Community Leader, or other recognised authority. You do not need a passport or national ID.</div></div>
+      </div>
+      <div style="background:var(--panel);border:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;gap:1rem">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--clay);flex-shrink:0;line-height:1;width:32px">3</div>
+        <div><div style="font-weight:600;margin-bottom:.25rem">Complete the enrollment claim form</div><div style="font-size:.82rem;color:var(--muted);line-height:1.65">Your Ward Recorder provides the enrollment claim form. Complete it accurately. Your ward, LLG, and district must be correct — this determines which candidates you vote for.</div></div>
+      </div>
+      <div style="background:var(--panel);border:1px solid var(--border);padding:1.1rem 1.25rem;display:flex;gap:1rem">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--clay);flex-shrink:0;line-height:1;width:32px">4</div>
+        <div><div style="font-weight:600;margin-bottom:.25rem">Follow up to confirm</div><div style="font-size:.82rem;color:var(--muted);line-height:1.65">Ask your Ward Recorder to confirm your name appears on the roll update. Do not assume it was processed. Follow up 4–6 weeks after submitting. If you have a phone, call PNGEC on (675) 327 7441 to verify.</div></div>
+      </div>
+      <div style="background:rgba(255,68,68,.05);border:1px solid rgba(255,68,68,.2);padding:1.1rem 1.25rem;display:flex;gap:1rem">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--alert);flex-shrink:0;line-height:1;width:32px">!</div>
+        <div><div style="font-weight:600;margin-bottom:.25rem;color:var(--alert)">If your Ward Recorder is unresponsive</div><div style="font-size:.82rem;color:var(--muted);line-height:1.65">Contact PNGEC directly. Report the Ward Recorder's inaction on this platform using the Roll Anomaly form. A Ward Recorder who fails to process eligible voters is failing their legal duty — and that failure is a reportable matter to PNGEC and potentially to ICAC.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WARD RECORDERS -->
+  <div class="ptab-panel" id="vtr-recorders">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+      <div>
+        <h3 style="font-family:'DM Serif Display',serif;font-size:1.2rem;margin-bottom:.25rem">Ward Recorder Directory</h3>
+        <p style="font-size:.82rem;color:var(--muted)">Community-built directory. Help fill the gaps — submit a Ward Recorder name below.</p>
+      </div>
+      <button class="btn-print" onclick="printRecorders()">🖨 Print Directory</button>
+    </div>
+    <div class="form-card" style="margin-bottom:1.5rem">
+      <div class="form-head" style="font-size:1rem">Add a Ward Recorder</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:.75rem;align-items:end">
+        <div class="field" style="margin:0"><label class="label">District</label>
+          <select class="select" id="wr-district" onchange="populateLLG('wr')"><option value="">District</option></select>
+        </div>
+        <div class="field" style="margin:0"><label class="label">LLG</label>
+          <select class="select" id="wr-llg" onchange="populateWard('wr')" disabled><option value="">LLG</option></select>
+        </div>
+        <div class="field" style="margin:0"><label class="label">Ward</label>
+          <select class="select" id="wr-ward" disabled><option value="">Ward</option></select>
+        </div>
+        <div class="field" style="margin:0"><label class="label">Recorder Name</label>
+          <input class="input" id="wr-name" placeholder="Full name">
+        </div>
+        <div class="field" style="margin:0"><label class="label">Contact</label>
+          <input class="input" id="wr-contact" placeholder="Phone (optional)">
+        </div>
+      </div>
+      <button class="btn btn-clay btn-sm" onclick="submitRecorder()" style="margin-top:.875rem">Add Recorder →</button>
+    </div>
+    <div class="tbl-wrap">
+      <table class="data-table"><thead><tr><th>Ward</th><th>LLG</th><th>District</th><th>Recorder Name</th><th>Contact</th><th>Status</th></tr></thead>
+      <tbody id="recorder-table"></tbody></table>
+    </div>
+    <div id="recorder-empty" style="padding:1.5rem;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--muted)">No Ward Recorder data submitted yet. Be the first to add your ward's recorder.</div>
+  </div>
+
+  <!-- CONTACTS -->
+  <div class="ptab-panel" id="vtr-contacts">
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1.2rem;margin-bottom:.25rem">Help &amp; Emergency Contacts</h3>
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:1.25rem">When your land is being taken, when your name is missing, when you need legal help — these are the people and organisations to call.</p>
+    <div class="ec-grid" id="voter-ec"></div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════ LAND REGISTRY ═══════════════════════════ -->
+<div class="page" id="page-land">
+<div class="wrap">
+  <div class="sec-kicker">Module 03 — Land Registry</div>
+  <h2 class="sec-title">Land <em>Registry</em></h2>
+  <p class="sec-desc">Register your ILG, file a land fraud case, track SABL threats, and document your clan's land permanently. Every entry is cryptographically verified.</p>
+  <div class="ptabs">
+    <button class="ptab active" onclick="PT('land','ilg',this)">ILG Registry</button>
+    <button class="ptab" onclick="PT('land','fraud',this)">Fraud Cases</button>
+    <button class="ptab" onclick="PT('land','sabl',this)">SABL Alerts</button>
+    <button class="ptab" onclick="PT('land','file',this)">File a Case</button>
+  </div>
+  <div class="ptab-panel active" id="land-ilg">
+    <div class="sabl-alert"><div class="sabl-icon">⚠️</div><div><div class="sabl-title">Active SABL Alert — Central Province</div><div class="sabl-desc">Portion 2465C (450ha near Port Moresby): declared improper and unlawful by the 2013 Commission of Inquiry. Eviction attempt using the condemned lease in 2019. Register your ILG now — an unregistered boundary is a vulnerable boundary.</div></div></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.875rem">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--muted)"><span id="ilg-count">0</span> ILGs registered</div>
+      <div style="display:flex;gap:.5rem"><button class="btn-print" onclick="printILGList()">🖨 Print Registry</button><button class="btn btn-clay btn-sm" onclick="PT('land','file',document.querySelectorAll('#page-land .ptab')[3])">+ Register ILG</button></div>
+    </div>
+    <div class="tbl-wrap"><table class="data-table"><thead><tr><th>Clan / ILG</th><th>District</th><th>Ward</th><th>File No.</th><th>Status</th><th>Registered</th><th>Hash</th></tr></thead><tbody id="ilg-table"></tbody></table></div>
+    <div id="ilg-empty" style="padding:2rem;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--muted)">No ILGs registered yet.</div>
+  </div>
+  <div class="ptab-panel" id="land-fraud">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.875rem">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--muted)"><span id="fraud-count">0</span> fraud cases filed</div>
+      <button class="btn btn-clay btn-sm" onclick="PT('land','file',document.querySelectorAll('#page-land .ptab')[3]);PT('file','fraud',document.querySelectorAll('#page-land .ptab')[3])">+ Report Fraud</button>
+    </div>
+    <div class="tbl-wrap"><table class="data-table"><thead><tr><th>Location</th><th>Type</th><th>Clan Affected</th><th>Filed</th><th>Status</th><th>Case ID</th></tr></thead><tbody id="fraud-table"></tbody></table></div>
+    <div id="fraud-empty" style="padding:2rem;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--muted)">No fraud cases filed yet.</div>
+  </div>
+  <div class="ptab-panel" id="land-sabl">
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1.1rem;margin-bottom:.75rem">SABL Threats — Central Province</h3>
+    <div class="sabl-alert"><div class="sabl-icon">🔴</div><div><div class="sabl-title">Portion 2465C — 450 Hectares — Port Moresby Area</div><div class="sabl-desc">Declared improper and unlawful by the 2013 Commission of Inquiry. Obtained through misrepresentation and fraud. NEC cancelled all SABLs 2014. O'Neill confirmed cancellation 2016. Despite this, Konekaru Holdings filed eviction proceedings in March 2019 using the condemned lease against customary landowners. Status: under legal challenge. This case proves a government-cancelled SABL can still be weaponised. Document your ILG boundaries now.</div></div></div>
+    <div class="sabl-alert" style="background:rgba(240,160,48,.06);border-color:rgba(240,160,48,.25)"><div class="sabl-icon">⚠️</div><div><div class="sabl-title" style="color:var(--warn)">60–70 SABL Files Stolen from DLPP</div><div class="sabl-desc">Between 60 and 70 SABL case files were stolen from the Department of Lands and Physical Planning. Perpetrators not publicly identified. TANO's Evidence Vault provides a community-held backup that cannot be stolen from a government office.</div></div></div>
+    <div class="info-box">The Customary Land Tenure Act 2026 (passed unanimously, March 2026) — architected by Hiri-Koiari MP Keith Iduhu — provides new legal pathways to challenge SABLs. Use the Help panel to understand your options.</div>
+  </div>
+  <div class="ptab-panel" id="land-file">
+    <div class="ptabs" style="margin-bottom:1.25rem">
+      <button class="ptab active" onclick="PT('file','ilg-form',this)">Register ILG</button>
+      <button class="ptab" onclick="PT('file','fraud-form',this)">Report Fraud</button>
+    </div>
+    <div class="ptab-panel active" id="file-ilg-form">
+      <div class="form-card">
+        <div class="form-head">Register Your ILG</div>
+        <div class="form-sub">Permanent · Cryptographically Verified</div>
+        <div class="info-box">Once submitted, your ILG record is cryptographically sealed. This is a community-held backup — it does not replace formal ILG registration with the government but ensures your records cannot be stolen, altered, or denied.</div>
+        <div class="row-2">
+          <div class="field"><label class="label">Clan / ILG Name *</label><input class="input" id="ilg-name" placeholder="Full clan or ILG name"></div>
+          <div class="field"><label class="label">ILG File Number</label><input class="input" id="ilg-file" placeholder="e.g. 19308"></div>
+        </div>
+        <div class="field"><label class="label">District *</label>
+          <select class="select" id="ilg-district" onchange="populateLLG('ilg')"><option value="">Select district</option></select>
+        </div>
+        <div class="row-2">
+          <div class="field"><label class="label">LLG *</label>
+            <select class="select" id="ilg-llg" onchange="populateWard('ilg')" disabled><option value="">Select LLG</option></select>
+          </div>
+          <div class="field"><label class="label">Village / Ward *</label>
+            <select class="select" id="ilg-ward" disabled><option value="">Select ward</option></select>
+          </div>
+        </div>
+        <div class="row-2">
+          <div class="field"><label class="label">Gazette Date</label><input class="input" type="date" id="ilg-gazette"></div>
+          <div class="field"><label class="label">Certificate Status</label>
+            <select class="select" id="ilg-cert"><option>Application in progress</option><option>Certificate received</option><option>Not yet applied</option></select>
+          </div>
+        </div>
+        <div class="field"><label class="label">Land Description / Traditional Boundaries</label><textarea class="textarea" id="ilg-desc" placeholder="Describe traditional land boundaries, landmarks, usage. The more detail the stronger the record."></textarea></div>
+        <div class="row-3">
+          <div class="field"><label class="label">Contact Person *</label><input class="input" id="ilg-contact" placeholder="Name and phone"></div>
+          <div class="field"><label class="label">Area (hectares est.)</label><input class="input" type="number" id="ilg-area" placeholder="e.g. 45"></div>
+          <div class="field"><label class="label">Clan Members (est.)</label><input class="input" type="number" id="ilg-members" placeholder="Approx."></div>
+        </div>
+        <button class="btn btn-clay" onclick="submitILG()" style="width:100%;margin-top:.25rem">Register ILG →</button>
+      </div>
+    </div>
+    <div class="ptab-panel" id="file-fraud-form">
+      <div class="form-card">
+        <div class="form-head">Report Land Fraud</div>
+        <div class="form-sub">Permanent Public Record</div>
+        <div class="field"><label class="label">Land Location / Portion Number *</label><input class="input" id="fr-location" placeholder="e.g. Portion 2465C, or village/ward name"></div>
+        <div class="row-2">
+          <div class="field"><label class="label">Type of Fraud *</label>
+            <select class="select" id="fr-type">
+              <option value="">Select type</option>
+              <option>SABL — unlawful lease</option>
+              <option>ILG manipulation — false signatories</option>
+              <option>Land sold without clan consent</option>
+              <option>Forged documents</option>
+              <option>Boundary encroachment</option>
+              <option>Developer eviction threat</option>
+              <option>Government alienation without consent</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field"><label class="label">District</label>
+            <select class="select" id="fr-district" onchange="populateLLG('fr')"><option value="">Select district</option></select>
+          </div>
+        </div>
+        <div class="field"><label class="label">Description *</label><textarea class="textarea" id="fr-desc" placeholder="Describe what happened — names, dates, documents involved, who is claiming the land."></textarea></div>
+        <div class="row-2">
+          <div class="field"><label class="label">Affected Clan / ILG</label><input class="input" id="fr-clan" placeholder="Clan or ILG name"></div>
+          <div class="field"><label class="label">Claimant / Developer (if known)</label><input class="input" id="fr-claimant" placeholder="Name of party making the claim"></div>
+        </div>
+        <div class="field"><label class="label">Your Contact (kept confidential)</label><input class="input" id="fr-contact" placeholder="Optional"></div>
+        <button class="btn btn-clay" onclick="submitFraud()" style="width:100%;margin-top:.25rem">File Fraud Report →</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════ MP RECORD ═══════════════════════════ -->
+<div class="page" id="page-mp">
+<div class="wrap">
+  <div class="sec-kicker">Module 04 — MP Accountability</div>
+  <h2 class="sec-title">The <em>Full Record</em></h2>
+  <p class="sec-desc">Every MP who served Rigo Open since 1972. Every DDA acquittal that was never filed. Every development promise with no published outcome. Permanent. Public. Unalterable.</p>
+  <div class="ptabs">
+    <button class="ptab active" onclick="PT('mp','history',this)">Parliamentary Record</button>
+    <button class="ptab" onclick="PT('mp','dda',this)">DDA Acquittals</button>
+    <button class="ptab" onclick="PT('mp','promises',this)">Development Promises</button>
+    <button class="ptab" onclick="PT('mp','current',this)">Current MPs</button>
+  </div>
+  <div class="ptab-panel active" id="mp-history">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.875rem">
+      <div class="sec-kicker" style="margin:0">Rigo Open 1972–2026</div>
+      <button class="btn-print" onclick="printMPRecord()">🖨 Print Record</button>
+    </div>
+    <div class="tbl-wrap"><table class="data-table"><thead><tr><th>Parliament</th><th>Years</th><th>Member of Parliament</th><th>Party</th><th>Key Role / Note</th><th>Status</th></tr></thead><tbody id="mp-history-table"></tbody></table></div>
+  </div>
+  <div class="ptab-panel" id="mp-dda">
+    <div class="sabl-alert" style="background:rgba(255,68,68,.05);border-color:rgba(255,68,68,.2)"><div class="sabl-icon">🔴</div><div><div class="sabl-title" style="color:var(--alert)">No DDA Acquittal Published — Any Year</div><div class="sabl-desc">Across four terms of Rigo Open representation (2007–2017 and 2022–present), no Rigo DDA financial acquittal has been publicly filed. K20 million per year. Zero public accountability record. A Section 51 demand has been prepared — file it under Document Demands.</div></div></div>
+    <div class="tbl-wrap"><table class="data-table"><thead><tr><th>Financial Year</th><th>DDA Allocation</th><th>MP at Time</th><th>Acquittal Filed</th><th>Status</th></tr></thead><tbody id="dda-table"></tbody></table></div>
+  </div>
+  <div class="ptab-panel" id="mp-promises">
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1.1rem;margin-bottom:.75rem">Development Promise Register — Announced vs Delivered</h3>
+    <div class="tbl-wrap"><table class="data-table"><thead><tr><th>Project</th><th>Announced</th><th>Amount</th><th>Actual Funder</th><th>Outcome</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Rigo Rice Project</strong></td><td>2022</td><td>K24.4M</td><td>K20M Govt + K4.4M DDA</td><td><span class="badge badge-warn">No outcome published</span></td></tr>
+      <tr><td><strong>Kwikila Hospital</strong></td><td>Multiple announcements</td><td>K12.5M</td><td>South Korea — KOICA</td><td><span class="badge badge-ok">Delivered — not PNG funded</span></td></tr>
+      <tr><td><strong>North Rigo Ring Road (36.5km)</strong></td><td>Promised 20+ years</td><td>—</td><td>Central Province Govt</td><td><span class="badge badge-ok">Completed 2023 — province funded</span></td></tr>
+      <tr><td><strong>Kemabolo Clean Water</strong></td><td>2025</td><td>—</td><td>UNICEF-KOICA</td><td><span class="badge badge-ok">Delivered — foreign funded</span></td></tr>
+      <tr><td><strong>Saroa School</strong></td><td>1950s (Australian colonial)</td><td>—</td><td>—</td><td><span class="badge badge-bad">Unchanged as of 2017 (RNZ documented)</span></td></tr>
+    </tbody></table></div>
+    <div style="margin-top:1rem;font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--muted)">Community members can add documented announcements — submit under Document Demands with supporting evidence.</div>
+  </div>
+  <div class="ptab-panel" id="mp-current">
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="background:var(--panel);border:1px solid var(--border);padding:1.5rem">
+        <div style="display:flex;align-items:flex-start;gap:1rem;margin-bottom:1rem">
+          <div style="width:44px;height:44px;background:var(--soil);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--clay);flex-shrink:0">AP</div>
+          <div style="flex:1"><div style="font-family:'DM Serif Display',serif;font-size:1.05rem;margin-bottom:.2rem">Sir Ano Pala KBE CMG ISO LLB</div><div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--muted)">MP Rigo Open · 2022–present · 4th term · Minister National Planning · PANGU Pati</div></div>
+          <div style="text-align:right"><div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--alert);line-height:1">0</div><div style="font-family:'JetBrains Mono',monospace;font-size:.52rem;color:var(--muted)">DDA Acquittals</div></div>
+        </div>
+        <div class="card-grid" style="grid-template-columns:repeat(4,1fr)">
+          <div class="dash-card" style="padding:.875rem"><div style="font-size:.75rem;font-weight:500;color:var(--alert)">None published</div><div class="dash-label">DDA Acquittals (all terms)</div></div>
+          <div class="dash-card" style="padding:.875rem"><div style="font-size:.75rem;font-weight:500;color:var(--alert)">Not published</div><div class="dash-label">Development Plan</div></div>
+          <div class="dash-card" style="padding:.875rem"><div style="font-size:.75rem;font-weight:500;color:var(--warn)">No outcome</div><div class="dash-label">Rigo Rice (K24.4M)</div></div>
+          <div class="dash-card" style="padding:.875rem"><div style="font-size:.75rem;font-weight:500;color:var(--warn)">4 parties · 4 terms</div><div class="dash-label">Party Changes</div></div>
+        </div>
+      </div>
+      <div style="background:var(--panel);border:1px solid var(--border);padding:1.5rem">
+        <div style="display:flex;align-items:flex-start;gap:1rem;margin-bottom:1rem">
+          <div style="width:44px;height:44px;background:var(--soil);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--clay);flex-shrink:0">KI</div>
+          <div style="flex:1"><div style="font-family:'DM Serif Display',serif;font-size:1.05rem;margin-bottom:.2rem">Keith Iduhu LLB</div><div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--muted)">MP Hiri-Koiari Open · 2022–present · First MP for new district · Deputy Opposition Leader · Land Reform Architect</div></div>
+          <div style="text-align:right"><div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--verify);line-height:1">1</div><div style="font-family:'JetBrains Mono',monospace;font-size:.52rem;color:var(--muted)">Major Legislation</div></div>
+        </div>
+        <div class="info-box" style="margin:0">Architect of the Customary Land Tenure Act 2026 — passed unanimously by Parliament, March 2026. Chaired the Special Parliamentary Committee on Customary Land and Land Reforms. PM Marape retained him as Chair despite having votes to replace him. His Act is the legal foundation for every ILG challenge and SABL cancellation in Central Province.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════ COVENANT ═══════════════════════════ -->
+<div class="page" id="page-covenant">
+<div class="wrap">
+  <div class="sec-kicker">Module 05 — Candidate Covenant</div>
+  <h2 class="sec-title">Candidate <em>Covenant</em></h2>
+  <p class="sec-desc">The Rigo Candidate Partnership Agreement — who has been offered it, who signed, what they committed to, and whether they are delivering. This register is permanent.</p>
+  <div class="card-grid" style="margin-bottom:1.5rem">
+    <div class="dash-card dc-green"><span class="dash-num" id="cov-signed">0</span><div class="dash-label">Signed</div></div>
+    <div class="dash-card dc-red"><span class="dash-num" id="cov-declined">0</span><div class="dash-label">Declined / No Response</div></div>
+    <div class="dash-card dc-gold"><span class="dash-num" id="cov-pending">3</span><div class="dash-label">Awaiting Offer / Response</div></div>
+    <div class="dash-card dc-teal"><span class="dash-num" id="cov-met">0</span><div class="dash-label">Obligations Met (post-election)</div></div>
+  </div>
+  <div id="covenant-cards">
+    <div class="cov-card pending">
+      <div class="cov-name">Sir Ano Pala KBE CMG ISO</div>
+      <div class="cov-role">Incumbent MP Rigo Open · Probable 2027 candidate</div>
+      <span class="badge badge-warn" style="display:inline-block;margin-bottom:.875rem">Covenant not yet offered</span>
+      <p style="font-size:.8rem;color:var(--muted);line-height:1.65;margin-bottom:.875rem">The Rigo Association will offer the Candidate Partnership Agreement to Sir Ano Pala before 2027 campaigning begins. His response — whether he signs or declines — will be published on this register permanently.</p>
+      <div class="sec-kicker" style="margin-bottom:.5rem;font-size:.52rem">Obligations (pending signature)</div>
+      <div class="cov-obligation"><div class="ob-box ob-na">—</div><div>Publish development plan within 90 days of election</div></div>
+      <div class="cov-obligation"><div class="ob-box ob-na">—</div><div>Hold quarterly public accountability briefings</div></div>
+      <div class="cov-obligation"><div class="ob-box ob-na">—</div><div>File and release DDA acquittals annually</div></div>
+      <div class="cov-obligation"><div class="ob-box ob-na">—</div><div>Attend minimum 2 community consultations per year</div></div>
+      <div class="cov-obligation"><div class="ob-box ob-na">—</div><div>Respond to formal queries within 30 working days</div></div>
+    </div>
+    <div class="cov-card pending" style="margin-top:2px">
+      <div class="cov-name">Lekwa Gure MBE OL</div>
+      <div class="cov-role">Former MP 2017–2022 · 4,257 first-preference votes 2022 · Probable 2027 candidate</div>
+      <span class="badge badge-warn" style="display:inline-block;margin-bottom:.875rem">Covenant not yet offered</span>
+      <p style="font-size:.8rem;color:var(--muted);line-height:1.65">Two-covenant preferential model: if both Gure and Elemi sign and agree to direct second preferences toward whichever of the two leads after first count, the split-vote mathematics that twice delivered the seat to Pala is resolved.</p>
+    </div>
+    <div class="cov-card pending" style="margin-top:2px">
+      <div class="cov-name">Turai Elemi</div>
+      <div class="cov-role">2022 NAP candidate · Led first-preference count at one stage · 4,573 votes · Probable 2027 candidate</div>
+      <span class="badge badge-warn" style="display:inline-block;margin-bottom:.875rem">Covenant not yet offered</span>
+      <p style="font-size:.8rem;color:var(--muted);line-height:1.65">Led the first-preference count in 2022 with 4,573 votes. The two-covenant model with Gure makes the mathematics work. The Association facilitates — it does not choose between them.</p>
+    </div>
+  </div>
+  <div style="margin-top:2rem;background:var(--panel);border:1px solid var(--border);padding:1.5rem">
+    <div class="sec-kicker">The Five Obligations</div>
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1.1rem;margin-bottom:.875rem">What Every Signatory Commits To</h3>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="background:var(--surface);border:1px solid var(--border);padding:.875rem 1rem;display:flex;gap:.875rem"><div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--clay);flex-shrink:0;width:28px;line-height:1">1</div><div><div style="font-weight:600;margin-bottom:.2rem;font-size:.88rem">Development Plan — 90 days</div><div style="font-size:.8rem;color:var(--muted)">Publish a Rigo District Development Plan within ninety days of election, with specific measurable commitments for each LLG area.</div></div></div>
+      <div style="background:var(--surface);border:1px solid var(--border);padding:.875rem 1rem;display:flex;gap:.875rem"><div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--clay);flex-shrink:0;width:28px;line-height:1">2</div><div><div style="font-weight:600;margin-bottom:.2rem;font-size:.88rem">Quarterly Public Briefings</div><div style="font-size:.8rem;color:var(--muted)">Quarterly accountability briefings open to all Rigo District community members, administered by the Rigo Association.</div></div></div>
+      <div style="background:var(--surface);border:1px solid var(--border);padding:.875rem 1rem;display:flex;gap:.875rem"><div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--clay);flex-shrink:0;width:28px;line-height:1">3</div><div><div style="font-weight:600;margin-bottom:.2rem;font-size:.88rem">Annual DDA Acquittals Published</div><div style="font-size:.8rem;color:var(--muted)">File and publicly release Rigo DDA financial acquittals within sixty days of each financial year close.</div></div></div>
+      <div style="background:var(--surface);border:1px solid var(--border);padding:.875rem 1rem;display:flex;gap:.875rem"><div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--clay);flex-shrink:0;width:28px;line-height:1">4</div><div><div style="font-weight:600;margin-bottom:.2rem;font-size:.88rem">Community Consultations</div><div style="font-size:.8rem;color:var(--muted)">Minimum two community consultation meetings per year in Rigo District.</div></div></div>
+      <div style="background:var(--surface);border:1px solid var(--border);padding:.875rem 1rem;display:flex;gap:.875rem"><div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--clay);flex-shrink:0;width:28px;line-height:1">5</div><div><div style="font-weight:600;margin-bottom:.2rem;font-size:.88rem">Respond to Accountability Queries</div><div style="font-size:.8rem;color:var(--muted)">Written responses to any formal accountability query from the Rigo Association within thirty working days.</div></div></div>
+    </div>
+    <div class="info-box" style="margin-top:1rem">The covenant is grounded in the standard publicly established by Rigo's own former MP Galeva Kwarara, who served three consecutive terms (1977–1992) and resigned from the Finance Ministry in 1988 rather than participate in conduct he considered improper. The agreement asks no more and no less than what that standard demands.</div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════ DEMANDS ═══════════════════════════ -->
+<div class="page" id="page-demands">
+<div class="wrap">
+  <div class="sec-kicker">Module 06 — Document Demands</div>
+  <h2 class="sec-title">Document <em>Demands</em></h2>
+  <p class="sec-desc">Every Section 51 demand filed, every ICAC complaint lodged, every deadline tracked. The silence is published as prominently as the response.</p>
+  <div class="card-grid" style="margin-bottom:1.5rem">
+    <div class="dash-card dc-clay"><span class="dash-num" id="dem-total">0</span><div class="dash-label">Demands Filed</div></div>
+    <div class="dash-card dc-red"><span class="dash-num" id="dem-overdue">0</span><div class="dash-label">Overdue — No Response</div></div>
+    <div class="dash-card dc-gold"><span class="dash-num" id="dem-pending">0</span><div class="dash-label">Awaiting Response</div></div>
+    <div class="dash-card dc-green"><span class="dash-num" id="dem-received">0</span><div class="dash-label">Responses Received</div></div>
+  </div>
+  <div class="ptabs">
+    <button class="ptab active" onclick="PT('dem','list',this)">All Demands</button>
+    <button class="ptab" onclick="PT('dem','file',this)">File a Demand</button>
+  </div>
+  <div class="ptab-panel active" id="dem-list">
+    <div id="demands-list"></div>
+    <div id="demands-empty" style="padding:2rem;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--muted);background:var(--surface);border:1px solid var(--border)">No demands filed yet.</div>
+  </div>
+  <div class="ptab-panel" id="dem-file">
+    <div class="form-card">
+      <div class="form-head">File a Document Demand</div>
+      <div class="form-sub">Section 51 — PNG Constitution</div>
+      <div class="info-box">Section 51 of the PNG Constitution guarantees the right of access to official documents, confirmed by the Supreme Court in the Solwara 1 ruling. A formal written demand triggers a legal response obligation. Non-response can support an ICAC complaint.</div>
+      <div class="row-2">
+        <div class="field"><label class="label">Reference Number *</label><input class="input" id="dd-ref" placeholder="e.g. RFI-S51-2026-001"></div>
+        <div class="field"><label class="label">Date Filed *</label><input class="input" type="date" id="dd-date"></div>
+      </div>
+      <div class="field"><label class="label">Documents Demanded *</label><textarea class="textarea" id="dd-docs" placeholder="e.g. Rigo DDA financial acquittals for financial years 2007–08 through 2023–24"></textarea></div>
+      <div class="row-2">
+        <div class="field"><label class="label">Sent to (Authority) *</label><input class="input" id="dd-to" placeholder="e.g. Department of Finance · DLPP"></div>
+        <div class="field"><label class="label">Response Deadline</label><input class="input" type="date" id="dd-deadline"></div>
+      </div>
+      <div class="field"><label class="label">Legal Basis</label><input class="input" id="dd-basis" value="Section 51, Constitution of Papua New Guinea (right of access to official documents)"></div>
+      <div class="field"><label class="label">Filed By</label><input class="input" id="dd-filer" placeholder="Rigo Think Tank (RFI) / Rigo Community Governance Association"></div>
+      <button class="btn btn-clay" onclick="submitDemand()" style="width:100%;margin-top:.25rem">File Demand →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════ GOVERNANCE ═══════════════════════════ -->
+<div class="page" id="page-governance">
+<div class="wrap">
+  <div class="sec-kicker">Module 07 — Community Governance</div>
+  <h2 class="sec-title">Community <em>Governance</em></h2>
+  <p class="sec-desc">Proposals, votes, and collective decisions for Rigo District. Every vote is recorded permanently. Any community member can propose. The community decides.</p>
+  <div class="card-grid" style="margin-bottom:1.5rem">
+    <div class="dash-card dc-teal"><span class="dash-num" id="dao-props">0</span><div class="dash-label">Proposals</div></div>
+    <div class="dash-card dc-clay"><span class="dash-num" id="dao-votes">0</span><div class="dash-label">Total Votes Cast</div></div>
+    <div class="dash-card dc-green"><span class="dash-num" id="dao-passed">0</span><div class="dash-label">Proposals Passed</div></div>
+    <div class="dash-card dc-red"><span class="dash-num" id="dao-active">0</span><div class="dash-label">Currently Active</div></div>
+  </div>
+  <div class="ptabs">
+    <button class="ptab active" onclick="PT('dao','list',this)">Proposals</button>
+    <button class="ptab" onclick="PT('dao','new',this)">New Proposal</button>
+  </div>
+  <div class="ptab-panel active" id="dao-list">
+    <div id="proposal-list"></div>
+    <div id="proposal-empty" style="padding:2rem;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--muted);background:var(--surface);border:1px solid var(--border)">No proposals yet.</div>
+  </div>
+  <div class="ptab-panel" id="dao-new">
+    <div class="form-card">
+      <div class="form-head">Submit a Proposal</div>
+      <div class="form-sub">Community Vote · Permanent Record</div>
+      <div class="field"><label class="label">Proposal Title *</label><input class="input" id="dao-title" placeholder="e.g. Demand Governor Rufina Peter formally recognise the Rigo Association as a monitoring partner for the IDP 2023–2027"></div>
+      <div class="row-2">
+        <div class="field"><label class="label">Category</label>
+          <select class="select" id="dao-cat"><option>Land Justice</option><option>Electoral Integrity</option><option>MP Accountability</option><option>Service Delivery</option><option>Association Governance</option><option>Other</option></select>
+        </div>
+        <div class="row-2" style="grid-template-columns:1fr 1fr">
+          <div class="field"><label class="label">Voting Period (days)</label><input class="input" type="number" id="dao-days" value="14" min="3" max="60"></div>
+          <div class="field"><label class="label">Proposed By</label><input class="input" id="dao-author" placeholder="Optional"></div>
+        </div>
+      </div>
+      <div class="field"><label class="label">Description *</label><textarea class="textarea" id="dao-desc" placeholder="What are you asking the community to vote on? What action should result from a Yes vote?" style="min-height:110px"></textarea></div>
+      <button class="btn btn-clay" onclick="submitProposal()" style="width:100%;margin-top:.25rem">Submit Proposal →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════ EVIDENCE VAULT ═══════════════════════════ -->
+<div class="page" id="page-evidence">
+<div class="wrap">
+  <div class="sec-kicker">Module 08 — Evidence Vault</div>
+  <h2 class="sec-title">Evidence <em>Vault</em></h2>
+  <p class="sec-desc">Upload your documents for permanent, tamper-proof storage. Once sealed, no individual, government office, or future administration can alter or delete your record. ILG certificates, boundary maps, meeting minutes, demand letters — everything that matters belongs here.</p>
+  <div class="info-box">Once you upload a document, a cryptographic fingerprint is generated from its content and stored permanently. If anyone ever claims the document was altered, the fingerprint proves it. Your documents cannot be stolen from this vault the way SABL files were stolen from the Department of Lands.</div>
+  <div class="vault-drop" id="vault-drop" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleDrop(event)">
+    <input type="file" multiple onchange="handleFileSelect(event)">
+    <div style="font-size:2.2rem;margin-bottom:.75rem">🔒</div>
+    <div style="font-family:'DM Serif Display',serif;font-size:1.2rem;margin-bottom:.35rem">Drop documents here or click to upload</div>
+    <div style="font-size:.8rem;color:var(--muted);margin-bottom:1rem">ILG certificates · Boundary maps · Meeting minutes · Demand letters · Government correspondence · Evidence of fraud</div>
+    <div style="display:flex;gap:.35rem;justify-content:center;flex-wrap:wrap">
+      <span style="background:rgba(255,255,255,.04);border:1px solid var(--border);padding:2px 8px;font-family:'JetBrains Mono',monospace;font-size:.54rem;color:var(--faint)">PDF</span>
+      <span style="background:rgba(255,255,255,.04);border:1px solid var(--border);padding:2px 8px;font-family:'JetBrains Mono',monospace;font-size:.54rem;color:var(--faint)">DOCX</span>
+      <span style="background:rgba(255,255,255,.04);border:1px solid var(--border);padding:2px 8px;font-family:'JetBrains Mono',monospace;font-size:.54rem;color:var(--faint)">JPG/PNG</span>
+      <span style="background:rgba(255,255,255,.04);border:1px solid var(--border);padding:2px 8px;font-family:'JetBrains Mono',monospace;font-size:.54rem;color:var(--faint)">MP4</span>
+    </div>
+  </div>
+  <div class="vault-form" id="vault-form">
+    <div class="form-head" style="font-size:1rem;margin-bottom:.875rem">Document Details</div>
+    <div class="row-2">
+      <div class="field"><label class="label">Document Title *</label><input class="input" id="v-title" placeholder="Descriptive title"></div>
+      <div class="field"><label class="label">Category *</label>
+        <select class="select" id="v-cat">
+          <option>ILG Certificate / Documentation</option><option>Land Boundary Map</option>
+          <option>Clan Meeting Minutes</option><option>Government Correspondence</option>
+          <option>DDA / Financial Record</option><option>Section 51 Demand</option>
+          <option>ICAC / Ombudsman Complaint</option><option>Evidence of Land Fraud</option>
+          <option>SABL Documentation</option><option>Electoral Roll / Population Data</option><option>Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="row-3">
+      <div class="field"><label class="label">Related Clan / ILG</label><input class="input" id="v-clan" placeholder="Clan or ILG name"></div>
+      <div class="field"><label class="label">District</label>
+        <select class="select" id="v-district-sel"><option value="">Select district</option></select>
+      </div>
+      <div class="field"><label class="label">Document Date</label><input class="input" type="date" id="v-docdate"></div>
+    </div>
+    <div class="field"><label class="label">Description</label><textarea class="textarea" id="v-desc" placeholder="What is this document? Why is it significant? What does it prove?"></textarea></div>
+    <div class="row-2">
+      <div class="field"><label class="label">Uploaded By</label><input class="input" id="v-uploader" placeholder="Optional"></div>
+      <div></div>
+    </div>
+    <button class="btn btn-clay" onclick="sealDocument()" style="width:100%">Seal &amp; Store →</button>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.875rem">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--muted)"><span id="vault-count">0</span> documents sealed</div>
+    <button class="btn-print" onclick="printVaultIndex()">🖨 Print Index</button>
+  </div>
+  <div style="border:1px solid var(--border)" id="vault-list"></div>
+  <div id="vault-empty" style="padding:2rem;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--muted);background:var(--surface);border:1px solid var(--border)">No documents sealed yet.</div>
+</div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════
+// DATA LAYER
+// ══════════════════════════════════════════════════════════════════
+const CP_DATA = {
+  "Rigo District":{"North Rigo LLG":["Saroa Ward","Boku Ward","Barakau Ward","Gomore Ward","Gaire Ward","Iokea Ward","Laloki Ward","Lea Lea Ward","Maibarum Ward","Manumanu Ward","Maopa Ward","Maragi Ward","Nara Ward","Ororo Ward","Rigo Ward","Sogeri Ward","Taurama Ward","Veimauri Ward","Veifa'a Ward","Kwikila Ward"],"South Rigo LLG":["Adukou Ward","Boera Ward","Gabadi Ward","Gabagaba Ward","Hisiu Ward","Imona Ward","Inauaia Ward","Kalo Ward","Kapa Kapa Ward","Keapara Ward","Lalela Ward","Loloata Ward","Marou Ward","Pari Ward","Porebada Ward","Rearea Ward","Tubusereia Ward","Vabukori Ward","Vaihua Ward","Barakau Ward"],"East Rigo LLG":["Abia Ward","Amau Ward","Bagi Ward","Gadaisu Ward","Kanabea Ward","Keakalo Ward","Kilauea Ward","Lalaura Ward","Moreguina Ward","Motu Motu Ward","Nawae Ward","Rigo Central Ward","Salamo Ward","Yule Ward","Kapari Ward"],"West Rigo LLG":["Bomana Ward","Dogura Ward","Gumini Ward","Hagita Ward","Hanuabada Ward","Manu Ward","Mirigeda Ward","Motukea Ward","Mudge Bay Ward","Sirinumu Ward","Sogeri Plateau Ward","Varirata Ward","Waigani Ward","Laloki Hinterland Ward"]},
+  "Abau District":{"Abau LLG":["Amazon Bay Ward","Aroma Rural Ward","Baramata Ward","Binaturi Ward","Cloudy Bay Ward","Deba Ward","Domara Ward","Gadaisu Ward","Garuahi Ward","Hula Ward","Kapari Ward","Karama Ward","Kupiano Ward","Lalaura Ward","Magi Ward","Maopa Ward","Morea Ward","Nara Ward","Ollala Ward","Paramana Ward"],"South Coast LLG":["Aroa Ward","Aupiana Ward","Bereina Ward","Giligili Ward","Kalo Ward","Kamali Ward","Maopa Ward","Mekeo Ward","Moreguina Ward","Ruatoka Ward"]},
+  "Goilala District":{"Goilala LLG":["Aginoru Ward","Efogi Ward","Guari Ward","Higaturu Ward","Kanabea Ward","Keenan Ward","Kerau Ward","Komo Ward","Kosipe Ward","Kuriva Ward","Lamington Ward","Naoro Ward","Ononge Ward","Tapini Ward","Woitape Ward"],"Chuave LLG":["Fane Ward","Kaintiba Ward","Magarida Ward","Mafulu Ward","Nipa Ward"]},
+  "Hiri-Koiari District":{"Hiri Rural LLG":["Boera Ward","Galley Reach Ward","Gaire Ward","Hanuabada Ward","Imona Ward","Kairuku Ward","Kemabolo Ward","Laloki Ward","Lea Lea Ward","Manumanu Ward","Motukea Ward","Napa Napa Ward","Papa Ward","Porebada Ward","Rearea Ward","Tubusereia Ward","Vabukori Ward"],"Koiari Rural LLG":["Bootless Bay Ward","Brown River Ward","Koiari Ward","Kokoda Ward","Rouna Ward","Sogeri Ward","Varirata Ward","Vanapa Ward"]},
+  "Kairuku District":{"Kairuku Rural LLG":["Berema Ward","Bereina Ward","Dolilai Ward","Eboa Ward","Inauaia Ward","Iokea Ward","Kairuku Ward","Kapari Ward","Mekeo Ward","Movave Ward","Ormond Ward","Pere Ward","Rigo Ward","Ruatoka Ward","Veimauri Ward"],"Mekeo LLG":["Aipeana Ward","Apaiapaia Ward","Bereina Ward","Eboa Ward","Fane Ward","Inawaia Ward","Kairuku Ward","Mekeo Central Ward","Oriomo Ward","Terapo Ward"],"Kuni LLG":["Bibori Ward","Fane Ward","Iokea Ward","Kamiali Ward","Kuni Ward","Labu Ward","Lalaura Ward","Mangau Ward","Marou Ward","Nara Ward"]}
+};
+
+const EMERGENCY_CONTACTS = [
+  {name:"CELCOR",full:"Centre for Environmental Law and Community Rights",role:"Free legal advice on land rights and environmental law",phone:"(675) 321 7069",email:"celcor@global.net.pg"},
+  {name:"Act Now! PNG",full:"Act Now! Papua New Guinea",role:"Land rights advocacy, SABL research, civic monitoring",phone:"(675) 7090 8484",email:"actnowpng@gmail.com"},
+  {name:"ICAC",full:"Independent Commission Against Corruption",role:"Corruption complaints — DDA misuse, land fraud, Leadership Code",phone:"(675) 325 2033",web:"icac.gov.pg"},
+  {name:"Ombudsman Commission",full:"Ombudsman Commission of PNG",role:"Leadership Code complaints against MPs and public officials",phone:"(675) 321 2002"},
+  {name:"Land Commission",full:"Land Commission of Papua New Guinea",role:"Challenge SABLs, land disputes, boundary hearings",phone:"(675) 321 7810"},
+  {name:"PNGEC",full:"PNG Electoral Commission",role:"Common roll enrollment, roll corrections, ward recorder contacts",phone:"(675) 327 7441",web:"pngec.gov.pg"},
+  {name:"DLPP",full:"Department of Lands and Physical Planning",role:"ILG registration, land title searches, SABL status",phone:"(675) 323 1060"}
+];
+
+const MP_HISTORY = [
+  {term:"Pre-split",years:"1972–1977",mp:"Reuben Taureka",party:"PANGU",note:"Rigo-Abau Open. Later Premier 1983–84. Highway named after him.",flag:"founding"},
+  {term:"2nd",years:"1977–1982",mp:"Galeva Kwarara",party:"PANGU",note:"Rigo MP 1st term. Provincial Premier. Finance Minister nationally.",flag:"integrity"},
+  {term:"3rd",years:"1982–1987",mp:"Galeva Kwarara",party:"PANGU",note:"Rigo MP 2nd term. Min. Finance & Trade & Industry.",flag:"integrity"},
+  {term:"4th",years:"1987–1992",mp:"Galeva Kwarara",party:"PANGU",note:"Rigo MP 3rd term. Resigned Finance Ministry July 1988 on principle.",flag:"integrity"},
+  {term:"5th",years:"1992–1997",mp:"Dibara Yagabo",party:"—",note:"Limited accessible record. No ministerial portfolio documented.",flag:"gap"},
+  {term:"6th",years:"1997–2002",mp:"Simon Kaumi",party:"—",note:"Limited accessible record. No ministerial portfolio documented.",flag:"gap"},
+  {term:"7th",years:"2002–2007",mp:"UNVERIFIED",party:"—",note:"FOI required — National Archives, Parliament Library, PNGEC.",flag:"unverified"},
+  {term:"8th",years:"2007–2012",mp:"Ano Pala",party:"NA → THE",note:"AG 2010. Min. Foreign Affairs. Floor crossed 2010. No DDA acquittal.",flag:"current"},
+  {term:"9th",years:"2012–2017",mp:"Ano Pala",party:"THE → PNC",note:"Senior O'Neill government. Min. Agriculture. No DDA acquittal.",flag:"current"},
+  {term:"10th",years:"2017–2022",mp:"Lekwa Gure",party:"Ind → PANGU → ULP",note:"Change mandate. Min. Civil Aviation. Min. Labour (2 months). No DDA acquittal.",flag:"current"},
+  {term:"11th",years:"2022–present",mp:"Sir Ano Pala",party:"PANGU",note:"Min. Mining → Min. National Planning. 4 parties across 4 terms. No DDA acquittal.",flag:"current"}
+];
+
+const VOTER_FAQ = [
+  {q:"Am I eligible to vote in 2027?",tp:"Mi inap long vot long 2027?",a:"You are eligible if you are a PNG citizen aged 18 or older by election day 2027. If you were born in 2009 or earlier, you qualify. You must also be enrolled on the common roll for your ward.",tpa:"Yu inap long vot sapos yu PNG sitisen na yu kamap 18 krismas o moa long de bilong vot 2027. Sapos yu bon long 2009 o bipo, yu inap. Yu mas stap long common roll bilong yu ward."},
+  {q:"How do I check if I am on the common roll?",tp:"Olsem wanem mi ken lukim sapos nem bilong mi stap long rol?",a:"Contact your Ward Recorder — they maintain your ward's enrollment list. You can also call PNGEC on (675) 327 7441. Check before late 2026 to have time to correct errors.",tpa:"Tokim Ward Recorder bilong yu — em i lukautim list bilong yupela ward. Yu ken ringim PNGEC long (675) 327 7441 tu. Lukim bipo pinis long 2026 so yu gat taim long stretim ol eria."},
+  {q:"How does preferential voting (LPV) work?",tp:"Olsem wanem preferential voting i wok?",a:"You vote for up to 3 candidates in order: 1st, 2nd, 3rd choice. If your first choice is eliminated, your vote moves to your second choice. Your vote is never wasted. Using all three preferences gives your vote maximum strength.",tpa:"Yu vot long 3 kontestan: namba 1, namba 2, namba 3. Sapos namba 1 bilong yu i go autsait, vot bilong yu i go long namba 2. Vot bilong yu i no lus. Nambawan, nambatu, nambatri — yusum ol tri bilong strong moa vot bilong yu."},
+  {q:"My name is missing from the roll — what do I do?",tp:"Nem bilong mi i no stap long rol — mi mas mekim wanem?",a:"1. Contact your Ward Recorder immediately with proof of identity. 2. If they are unresponsive, call PNGEC directly on (675) 327 7441. 3. Report the problem on this platform using the Roll Anomaly form. 4. A Ward Recorder who refuses to process eligible voters can be reported to PNGEC and ICAC.",tpa:"1. Tokim Ward Recorder kwiktaim na karim eksiden. 2. Sapos em i no harim, ringim PNGEC long (675) 327 7441. 3. Ripotim problem long dispela platform. 4. Ward Recorder i no wok em inap reportim long PNGEC na ICAC."},
+  {q:"What is a Ward Recorder and what are their duties?",tp:"Husat Ward Recorder na wanem wok bilong em?",a:"A Ward Recorder is a government-appointed person responsible for updating and maintaining the common roll for their ward. Their duties include: adding new eligible voters, removing deceased persons, correcting errors, and ensuring all eligible residents are enrolled. If your Ward Recorder is absent or unresponsive, report this to PNGEC — it is a failure of their legal duty.",tpa:"Ward Recorder em wanpela man i gat wok long gavman long save long ol nem long common roll bilong en ward. Wok bilong em: adim ol nupela voter, rausim ol man i dai pinis, stretim ol eria, na mekim shur olgeta man inap long vot i stap long rol."},
+  {q:"What are my rights on polling day?",tp:"Ol rait bilong mi long de bilong vot?",a:"1. You have the right to vote without intimidation or coercion. 2. Your vote is secret — no one can force you to show your ballot. 3. Accepting money for your vote is bribery — a criminal offence for both parties. 4. If your name is missing despite prior enrollment, report to the Returning Officer immediately. 5. Report electoral fraud to PNGEC: (675) 327 7441.",tpa:"1. Yu gat rait long vot, nogat ol man i paitim yu o bagarapim yu. 2. Vot bilong yu i hait — nobody inap lukim. 3. Kisim moni bilong vot em krim — aret na man i givim moni na man i kisim moni. 4. Sapos nem bilong yu i no stap, tokim Returning Officer kwiktaim. 5. Ripotim fraud long PNGEC: (675) 327 7441."},
+  {q:"What is the enrollment deadline for 2027?",tp:"Wanem taim bilong pinis long pulim nem long rol bilong 2027?",a:"The exact deadline has not been announced. PNGEC typically closes the roll approximately 4 months before election day. Do not wait for the announcement — enroll now. If you turn 18 before election day 2027, enroll as soon as possible.",tpa:"PNGEC i no yet autim wanem de bilong pinis. Oltaim ol i pasim rol samting 4 mun bipo long de bilong vot. No wet — pulim nem nau. Sapos yu kamap 18 bipo long de bilong vot 2027, pulim nem hariap."},
+  {q:"What is the Rigo Candidate Covenant and why does it matter?",tp:"Wanem Rigo Candidate Covenant na bilong wanem em i impoten?",a:"The Candidate Covenant is a written agreement that any 2027 Rigo Open candidate can sign committing them to: publish a development plan within 90 days, hold quarterly public briefings, file DDA acquittals annually, hold community consultations, and respond to accountability queries. Candidates who sign are publicly accountable. Candidates who refuse are also on the public record — and the community knows.",tpa:"Covenant em wanpela rait peba wanpela kontestan inap sain bilong 2027 election. Em i olsem promes: publishim plan bilong kamap long 90 de, kichem public briefing olgeta kota, givim DDA acquittal olgeta yia, mekim community meeting, na bekim ol kwestion bilong accountability. Olgeta man i sain em i gat rekod bilong ol. Olgeta man i no sain — rekod bilong ol i stap tu."}
+];
+
+// ══════════════════════════════════════════════════════════════════
+// STORAGE
+// ══════════════════════════════════════════════════════════════════
+const DB={
+  get(k){try{return JSON.parse(localStorage.getItem('tano3_'+k)||'null')}catch{return null}},
+  set(k,v){try{localStorage.setItem('tano3_'+k,JSON.stringify(v))}catch{}},
+  push(k,item){const a=DB.get(k)||[];a.push(item);DB.set(k,a);return a}
+};
+
+// ══════════════════════════════════════════════════════════════════
+// LANGUAGE
+// ══════════════════════════════════════════════════════════════════
+let LANG='en';
+function toggleLang(){
+  LANG=LANG==='en'?'tp':'en';
+  document.getElementById('lang-btn').textContent=LANG==='en'?'TP':'EN';
+  renderFAQ();
+  showToast(LANG==='en'?'Switched to English':'Switchim go long Tok Pisin','info');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// COUNTDOWN
+// ══════════════════════════════════════════════════════════════════
+function updateCountdown(){
+  const target=new Date('2027-06-01T00:00:00');
+  const now=new Date();
+  const diff=target-now;
+  if(diff<=0) return;
+  const d=Math.floor(diff/86400000);
+  const h=Math.floor((diff%86400000)/3600000);
+  const m=Math.floor((diff%3600000)/60000);
+  const dEl=document.getElementById('cd-d');
+  const hEl=document.getElementById('cd-h');
+  const mEl=document.getElementById('cd-m');
+  if(dEl) dEl.textContent=d;
+  if(hEl) hEl.textContent=h;
+  if(mEl) mEl.textContent=m;
+}
+setInterval(updateCountdown,60000);
+updateCountdown();
+
+// ══════════════════════════════════════════════════════════════════
+// OFFLINE INDICATOR
+// ══════════════════════════════════════════════════════════════════
+function checkOnline(){
+  const dot=document.getElementById('offline-dot');
+  const lbl=document.getElementById('offline-lbl');
+  const online=navigator.onLine;
+  if(dot) dot.className='offline-dot'+(online?'':' offline');
+  if(lbl) lbl.textContent=online?'Online':'Offline';
+}
+window.addEventListener('online',checkOnline);
+window.addEventListener('offline',checkOnline);
+checkOnline();
+
+// ══════════════════════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════════════════════
+function showPage(id, btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  const page=document.getElementById('page-'+id);
+  if(page) page.classList.add('active');
+  if(btn) btn.classList.add('active');
+  else{const tabs=document.querySelectorAll('.nav-tab');tabs.forEach(t=>{if(t.getAttribute('onclick')&&t.getAttribute('onclick').includes("'"+id+"'"))t.classList.add('active')})}
+  refreshAll();
+  window.scrollTo(0,0);
+}
+
+function PT(group,panel,btn){
+  // deactivate all panels with matching prefix
+  document.querySelectorAll(`[id^="${group}-"],[id^="${panel}-"],[id^="file-"],[id^="vtr-"],[id^="mp-"],[id^="dem-"],[id^="dao-"],[id^="land-"],[id^="reg-"],[id^="pop-"],[id^="mpa-"]`).forEach(p=>{
+    if(p.classList.contains('ptab-panel')) p.classList.remove('active');
+  });
+  const target=document.getElementById(group+'-'+panel)||document.getElementById('file-'+panel)||document.getElementById(panel+'-form');
+  if(target) target.classList.add('active');
+  if(btn){const sibs=btn.parentElement.querySelectorAll('.ptab');sibs.forEach(s=>s.classList.remove('active'));btn.classList.add('active')}
+}
+
+// ══════════════════════════════════════════════════════════════════
+// CASCADING DROPDOWNS
+// ══════════════════════════════════════════════════════════════════
+function initAllDistrictDropdowns(){
+  const ids=['r-district','w-district','ra-district','wr-district','ilg-district','fr-district','v-district-sel'];
+  ids.forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+    el.innerHTML='<option value="">Select district</option>'+Object.keys(CP_DATA).map(d=>`<option>${d}</option>`).join('');
+  });
+}
+
+function populateLLG(prefix){
+  const distEl=document.getElementById(prefix+'-district');
+  const llgEl=document.getElementById(prefix+'-llg');
+  const wardEl=document.getElementById(prefix+'-ward');
+  if(!distEl||!llgEl) return;
+  const dist=distEl.value;
+  llgEl.innerHTML='<option value="">Select LLG</option>';
+  if(wardEl){wardEl.innerHTML='<option value="">Select ward</option>';wardEl.disabled=true}
+  if(!dist||!CP_DATA[dist]){llgEl.disabled=true;return}
+  llgEl.disabled=false;
+  Object.keys(CP_DATA[dist]).forEach(llg=>llgEl.innerHTML+=`<option>${llg}</option>`);
+}
+
+function populateWard(prefix){
+  const distEl=document.getElementById(prefix+'-district');
+  const llgEl=document.getElementById(prefix+'-llg');
+  const wardEl=document.getElementById(prefix+'-ward');
+  if(!distEl||!llgEl||!wardEl) return;
+  const dist=distEl.value;
+  const llg=llgEl.value;
+  wardEl.innerHTML='<option value="">Select ward</option>';
+  if(!dist||!llg||!CP_DATA[dist]||!CP_DATA[dist][llg]){wardEl.disabled=true;return}
+  wardEl.disabled=false;
+  CP_DATA[dist][llg].forEach(w=>wardEl.innerHTML+=`<option>${w}</option>`);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// VOTER ELIGIBILITY CHECK
+// ══════════════════════════════════════════════════════════════════
+function checkEligibility(){
+  const dob=document.getElementById('r-dob').value;
+  const result=document.getElementById('eligibility-result');
+  if(!dob||!result) return;
+  const birthDate=new Date(dob);
+  const electionDate=new Date('2027-06-30');
+  const age=Math.floor((electionDate-birthDate)/31557600000);
+  result.style.display='block';
+  if(age>=18){
+    result.className='eligibility-result er-eligible';
+    result.innerHTML=`<strong>✓ Eligible to vote in 2027</strong><br><span style="font-size:.8rem">You will be ${age} years old by election day. Make sure you are enrolled on the common roll for your ward. Check your enrollment status with your Ward Recorder or PNGEC on (675) 327 7441.</span>`;
+  } else if(age>=0){
+    result.className='eligibility-result er-future';
+    result.innerHTML=`<strong>⚠ Not yet eligible — but soon</strong><br><span style="font-size:.8rem">You will be ${age} years old at the 2027 election — under 18. However, if you turn 18 before the polling date, you may be eligible. Contact PNGEC to confirm and enroll early.</span>`;
+  } else {
+    result.className='eligibility-result er-eligible';
+    result.innerHTML=`<strong>✓ Eligible to vote in 2027</strong><br><span style="font-size:.8rem">You will be ${Math.abs(Math.floor((new Date(dob)-new Date())/31557600000))} years old. Ensure you are enrolled on the common roll for your ward.</span>`;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// HASH
+// ══════════════════════════════════════════════════════════════════
+async function sha256(str){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,16);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════════════════════════
+function showToast(msg,type='success'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className=`toast ${type} show`;
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// REGISTER
+// ══════════════════════════════════════════════════════════════════
+async function submitRegister(){
+  const fn=document.getElementById('r-fname').value.trim();
+  const ln=document.getElementById('r-lname').value.trim();
+  if(!fn||!ln){showToast('Please enter your first and last name','error');return}
+  const district=document.getElementById('r-district').value;
+  if(!district){showToast('Please select your district','error');return}
+  const dob=document.getElementById('r-dob').value;
+  if(!dob){showToast('Please enter your date of birth','error');return}
+  const ward=document.getElementById('r-ward').value||document.getElementById('r-llg').value||'—';
+  const entry={name:`${fn} ${ln}`,district,llg:document.getElementById('r-llg').value,ward,clan:document.getElementById('r-clan').value,ilg:document.getElementById('r-ilg').value,dob,sex:document.getElementById('r-sex').value,enrolled:document.getElementById('r-enrolled').value,contact:document.getElementById('r-contact').value,petition:document.getElementById('r-petition').value,notes:document.getElementById('r-notes').value,ts:new Date().toISOString()};
+  const electionDate=new Date('2027-06-30');
+  const birthDate=new Date(dob);
+  entry.eligible2027=Math.floor((electionDate-birthDate)/31557600000)>=18;
+  entry.hash=await sha256(JSON.stringify(entry));
+  DB.push('members',entry);
+  showToast('Registration complete — permanently sealed ✓');
+  // Print receipt
+  printReceipt(entry);
+  refreshAll();
+}
+
+async function submitWard(){
+  const ward=document.getElementById('w-ward').value||document.getElementById('w-llg').value;
+  const dist=document.getElementById('w-district').value;
+  const pop=parseInt(document.getElementById('w-pop').value)||0;
+  if(!ward||!dist||!pop){showToast('Please complete ward, district and population fields','error');return}
+  const adults=parseInt(document.getElementById('w-adults').value)||Math.round(pop*0.52);
+  const enrolled=parseInt(document.getElementById('w-enrolled').value)||0;
+  const gap=enrolled?(adults-enrolled):null;
+  const entry={ward,district:dist,llg:document.getElementById('w-llg').value,pop,adults,enrolled,gap,recorder:document.getElementById('w-recorder').value,notes:document.getElementById('w-notes').value,ts:new Date().toISOString()};
+  entry.hash=await sha256(JSON.stringify(entry));
+  DB.push('wards',entry);
+  showToast('Ward data submitted ✓');
+  refreshAll();
+}
+
+async function submitRollAnomaly(){
+  const ward=document.getElementById('ra-ward').value||document.getElementById('ra-llg').value||document.getElementById('ra-district').value;
+  const type=document.getElementById('ra-type').value;
+  if(!ward||!type){showToast('Please select ward and anomaly type','error');return}
+  const entry={ward,district:document.getElementById('ra-district').value,type,desc:document.getElementById('ra-desc').value,affected:document.getElementById('ra-affected').value,contact:document.getElementById('ra-contact').value,ts:new Date().toISOString()};
+  entry.hash=await sha256(JSON.stringify(entry));
+  DB.push('anomalies',entry);
+  showToast('Roll anomaly reported ✓');
+  refreshAll();
+}
+
+async function submitRecorder(){
+  const ward=document.getElementById('wr-ward').value||document.getElementById('wr-llg').value;
+  const name=document.getElementById('wr-name').value.trim();
+  if(!ward||!name){showToast('Please select a ward and enter recorder name','error');return}
+  DB.push('recorders',{district:document.getElementById('wr-district').value,llg:document.getElementById('wr-llg').value,ward,name,contact:document.getElementById('wr-contact').value,ts:new Date().toISOString()});
+  showToast('Ward Recorder added ✓');
+  renderRecorders();
+}
+
+// ══════════════════════════════════════════════════════════════════
+// ILG / FRAUD
+// ══════════════════════════════════════════════════════════════════
+async function submitILG(){
+  const name=document.getElementById('ilg-name').value.trim();
+  if(!name){showToast('Please enter clan/ILG name','error');return}
+  const entry={name,file:document.getElementById('ilg-file').value,district:document.getElementById('ilg-district').value,llg:document.getElementById('ilg-llg').value,ward:document.getElementById('ilg-ward').value,gazette:document.getElementById('ilg-gazette').value,cert:document.getElementById('ilg-cert').value,desc:document.getElementById('ilg-desc').value,contact:document.getElementById('ilg-contact').value,area:document.getElementById('ilg-area').value,members:document.getElementById('ilg-members').value,ts:new Date().toISOString()};
+  entry.hash=await sha256(JSON.stringify(entry));
+  DB.push('ilgs',entry);
+  showToast('ILG registered and sealed ✓');
+  refreshAll();
+}
+
+async function submitFraud(){
+  const loc=document.getElementById('fr-location').value.trim();
+  const type=document.getElementById('fr-type').value;
+  if(!loc||!type){showToast('Please enter location and fraud type','error');return}
+  const entry={location:loc,type,district:document.getElementById('fr-district').value,desc:document.getElementById('fr-desc').value,clan:document.getElementById('fr-clan').value,claimant:document.getElementById('fr-claimant').value,contact:document.getElementById('fr-contact').value,ts:new Date().toISOString()};
+  entry.caseId='FRAUD-'+String(Date.now()).slice(-6);
+  entry.hash=await sha256(JSON.stringify(entry));
+  DB.push('frauds',entry);
+  showToast('Fraud case filed and sealed ✓');
+  refreshAll();
+}
+
+// ══════════════════════════════════════════════════════════════════
+// DEMANDS
+// ══════════════════════════════════════════════════════════════════
+async function submitDemand(){
+  const ref=document.getElementById('dd-ref').value.trim();
+  const docs=document.getElementById('dd-docs').value.trim();
+  if(!ref||!docs){showToast('Please enter reference and documents demanded','error');return}
+  const entry={ref,date:document.getElementById('dd-date').value||new Date().toISOString().split('T')[0],docs,to:document.getElementById('dd-to').value,deadline:document.getElementById('dd-deadline').value,basis:document.getElementById('dd-basis').value,filer:document.getElementById('dd-filer').value,status:'pending',ts:new Date().toISOString()};
+  entry.hash=await sha256(JSON.stringify(entry));
+  DB.push('demands',entry);
+  showToast('Document demand filed ✓');
+  refreshAll();
+}
+
+// ══════════════════════════════════════════════════════════════════
+// GOVERNANCE
+// ══════════════════════════════════════════════════════════════════
+async function submitProposal(){
+  const title=document.getElementById('dao-title').value.trim();
+  const desc=document.getElementById('dao-desc').value.trim();
+  if(!title||!desc){showToast('Please enter title and description','error');return}
+  const days=parseInt(document.getElementById('dao-days').value)||14;
+  const deadline=new Date(Date.now()+days*86400000).toISOString().split('T')[0];
+  const entry={id:'PROP-'+String(Date.now()).slice(-5),title,cat:document.getElementById('dao-cat').value,desc,author:document.getElementById('dao-author').value,deadline,yes:0,no:0,ts:new Date().toISOString()};
+  entry.hash=await sha256(JSON.stringify(entry));
+  DB.push('proposals',entry);
+  document.getElementById('dao-title').value='';document.getElementById('dao-desc').value='';
+  showToast('Proposal submitted ✓');
+  refreshAll();
+}
+
+function vote(idx,choice){
+  const proposals=DB.get('proposals')||[];
+  if(!proposals[idx]) return;
+  const voted=DB.get('voted')||{};
+  if(voted[proposals[idx].id]){showToast('You have already voted on this proposal','error');return}
+  proposals[idx][choice]=(proposals[idx][choice]||0)+1;
+  DB.set('proposals',proposals);
+  voted[proposals[idx].id]=choice;
+  DB.set('voted',voted);
+  showToast('Vote recorded ✓');
+  renderProposals();
+}
+
+// ══════════════════════════════════════════════════════════════════
+// EVIDENCE VAULT
+// ══════════════════════════════════════════════════════════════════
+let pendingFile=null;
+function handleFileSelect(e){if(e.target.files.length)prepareVault(e.target.files[0])}
+function handleDrop(e){e.preventDefault();document.getElementById('vault-drop').classList.remove('drag-over');if(e.dataTransfer.files.length)prepareVault(e.dataTransfer.files[0])}
+function prepareVault(file){pendingFile=file;document.getElementById('vault-form').classList.add('show');document.getElementById('v-title').value=file.name}
+async function sealDocument(){
+  const title=document.getElementById('v-title').value.trim();
+  if(!title){showToast('Please enter a document title','error');return}
+  const entry={title,cat:document.getElementById('v-cat').value,clan:document.getElementById('v-clan').value,district:document.getElementById('v-district-sel').value,desc:document.getElementById('v-desc').value,uploader:document.getElementById('v-uploader').value,docdate:document.getElementById('v-docdate').value,filename:pendingFile?pendingFile.name:'Manual entry',size:pendingFile?Math.round(pendingFile.size/1024)+'KB':'—',ts:new Date().toISOString()};
+  entry.hash=await sha256(JSON.stringify(entry)+(pendingFile?String(pendingFile.size):title));
+  DB.push('vault',entry);
+  pendingFile=null;
+  document.getElementById('vault-form').classList.remove('show');
+  document.getElementById('v-title').value='';document.getElementById('v-desc').value='';
+  showToast('Document sealed and stored ✓');
+  refreshAll();
+}
+
+// ══════════════════════════════════════════════════════════════════
+// QUESTION PANEL (AI - no label visible to user)
+// ══════════════════════════════════════════════════════════════════
+const qHistory={};
+async function askQ(panel,msg){
+  if(!msg||!msg.trim()) return;
+  const inputEl=document.getElementById('q-in-'+panel);
+  if(inputEl) inputEl.value='';
+  const msgsEl=document.getElementById('q-msgs-'+panel);
+  if(!msgsEl) return;
+  msgsEl.innerHTML+=`<div class="q-msg user"><div class="q-avatar user">U</div><div class="q-bubble">${msg}</div></div>`;
+  const tid='typ-'+panel+Date.now();
+  msgsEl.innerHTML+=`<div id="${tid}" class="q-msg"><div class="q-avatar bot">T</div><div class="q-typing"><span></span><span></span><span></span></div></div>`;
+  msgsEl.scrollTop=msgsEl.scrollHeight;
+  const sendBtn=msgsEl.closest('.q-panel')?.querySelector('.q-send');
+  if(sendBtn) sendBtn.disabled=true;
+  if(!qHistory[panel]) qHistory[panel]=[];
+  qHistory[panel].push({role:'user',content:msg});
+  const SYSTEM=`You are a land justice and civic rights advisor for Papua New Guinea, specialising in Central Province. You have deep knowledge of: PNG land law, Customary Land Tenure Act 2026, Land (Amendment) Act 2024, ILG registration, SABL fraud, Section 51 Constitution, Leadership Code, OLICAC 2020, common roll enrollment, preferential voting (LPV), the Rigo District parliamentary record 1972–2026, all five Central Province districts (Abau, Goilala, Hiri-Koiari, Kairuku, Rigo), Keith Iduhu's land reform work, CELCOR, Act Now! PNG, ICAC, Ombudsman Commission, Land Commission, PNGEC. You can respond in both English and Tok Pisin — respond in the same language the user asks in. Keep answers practical, specific to PNG context, and accessible to community members without legal training. Be direct and helpful. Never refer to yourself as an AI.`;
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYSTEM,messages:qHistory[panel]})});
+    const data=await resp.json();
+    const reply=data.content?.[0]?.text||'Unable to get a response. Please try again.';
+    qHistory[panel].push({role:'assistant',content:reply});
+    document.getElementById(tid)?.remove();
+    msgsEl.innerHTML+=`<div class="q-msg"><div class="q-avatar bot">T</div><div class="q-bubble">${reply.replace(/\n/g,'<br>')}</div></div>`;
+  }catch{
+    document.getElementById(tid)?.remove();
+    msgsEl.innerHTML+=`<div class="q-msg"><div class="q-avatar bot">T</div><div class="q-bubble" style="color:var(--alert)">Cannot connect right now. Please check your internet connection and try again.</div></div>`;
+  }
+  if(sendBtn) sendBtn.disabled=false;
+  msgsEl.scrollTop=msgsEl.scrollHeight;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// RENDER FUNCTIONS
+// ══════════════════════════════════════════════════════════════════
+function renderMembers(){
+  const members=DB.get('members')||[];
+  const el=document.getElementById('h-members');if(el)el.textContent=members.length;
+  const total=document.getElementById('reg-total');if(total)total.textContent=members.length;
+  const memCount=document.getElementById('mem-count');if(memCount)memCount.textContent=members.length;
+  const eligible=members.filter(m=>m.eligible2027).length;
+  const enrolled=members.filter(m=>m.enrolled&&m.enrolled.includes('Enrolled')).length;
+  const unenrolled=members.filter(m=>m.enrolled&&m.enrolled.includes('Not')).length;
+  const wardSet=new Set(members.map(m=>m.ward||m.llg).filter(Boolean));
+  const e=document.getElementById('reg-eligible');if(e)e.textContent=eligible;
+  const en=document.getElementById('reg-enrolled');if(en)en.textContent=enrolled;
+  const un=document.getElementById('reg-unenrolled');if(un)un.textContent=unenrolled;
+  const wr=document.getElementById('reg-wards-rep');if(wr)wr.textContent=wardSet.size;
+  const feed=document.getElementById('member-feed');
+  if(feed){
+    if(!members.length){feed.innerHTML='<div style="padding:1.5rem;text-align:center;font-family:\'JetBrains Mono\',monospace;font-size:.6rem;color:var(--muted)">No members registered yet.</div>';return}
+    feed.innerHTML=members.slice().reverse().slice(0,15).map(m=>`<div class="member-item"><div class="member-avatar">${m.name.charAt(0).toUpperCase()}</div><div><div class="member-name">${m.name}</div><div class="member-meta">${m.district||'—'} · ${m.ward||m.llg||'—'} · ${m.eligible2027?'Eligible 2027':'Check eligibility'}</div></div><div class="member-hash">${m.hash}</div></div>`).join('');
+  }
+  const tbody=document.getElementById('members-table-body');
+  if(tbody) tbody.innerHTML=members.slice().reverse().map(m=>`<tr><td><strong>${m.name}</strong></td><td>${m.district||'—'}</td><td>${m.ward||m.llg||'—'}</td><td>${m.clan||'—'}</td><td><span class="badge ${m.eligible2027?'badge-ok':'badge-warn'}">${m.eligible2027?'Eligible 2027':'Check'}</span></td><td style="font-size:.75rem">${m.enrolled||'—'}</td><td style="font-family:'JetBrains Mono',monospace;font-size:.5rem;color:var(--verify)">${m.hash}</td></tr>`).join('');
+}
+
+function renderWards(){
+  const wards=DB.get('wards')||[];
+  const verified=document.getElementById('w-verified');if(verified)verified.textContent=wards.length;
+  const withGap=wards.filter(w=>w.gap!==null&&w.gap>20).length;
+  const wGap=document.getElementById('w-gap');if(wGap)wGap.textContent=withGap;
+  const hWards=document.getElementById('h-wards');if(hWards)hWards.textContent=wards.length;
+  const tbody=document.getElementById('ward-table-body');
+  if(tbody){
+    if(!wards.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:1.5rem;font-family:\'JetBrains Mono\',monospace;font-size:.6rem">No ward data submitted yet.</td></tr>';return}
+    tbody.innerHTML=wards.slice().reverse().map(w=>{
+      const gapPct=w.enrolled&&w.adults?Math.round((w.adults-w.enrolled)/w.adults*100):null;
+      const cls=gapPct===null?'':(gapPct>30?'badge-bad':(gapPct>15?'badge-warn':'badge-ok'));
+      return `<tr><td><strong>${w.ward}</strong></td><td>${(w.pop||0).toLocaleString()}</td><td>${(w.adults||0).toLocaleString()}</td><td>${w.enrolled?w.enrolled.toLocaleString():'Unknown'}</td><td>${gapPct!==null?`<span class="badge ${cls}">${gapPct}% gap</span>`:'—'}</td></tr>`;
+    }).join('');
+  }
+}
+
+function renderAnomalies(){
+  const anomalies=DB.get('anomalies')||[];
+  const container=document.getElementById('anomaly-list');
+  if(!container) return;
+  if(!anomalies.length){container.innerHTML='<div style="padding:1.5rem;text-align:center;font-family:\'JetBrains Mono\',monospace;font-size:.6rem;color:var(--muted);background:var(--surface);border:1px solid var(--border)">No anomalies reported yet.</div>';return}
+  container.innerHTML=anomalies.slice().reverse().map(a=>`<div style="background:var(--panel);border:1px solid var(--border);padding:.875rem 1rem;margin-bottom:2px"><div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--warn);margin-bottom:.2rem">${a.type}</div><div style="font-size:.82rem;font-weight:500;margin-bottom:.2rem">${a.ward} · ${a.district||'—'}</div><div style="font-size:.78rem;color:var(--muted)">${a.desc}</div><div style="font-family:'JetBrains Mono',monospace;font-size:.5rem;color:var(--verify);margin-top:.35rem">${a.hash}</div></div>`).join('');
+}
+
+function renderRecorders(){
+  const recorders=DB.get('recorders')||[];
+  const tbody=document.getElementById('recorder-table');
+  const empty=document.getElementById('recorder-empty');
+  if(!tbody) return;
+  if(!recorders.length){tbody.innerHTML='';if(empty)empty.style.display='block';return}
+  if(empty)empty.style.display='none';
+  tbody.innerHTML=recorders.map(r=>`<tr><td><strong>${r.ward}</strong></td><td>${r.llg||'—'}</td><td>${r.district||'—'}</td><td>${r.name}</td><td style="font-family:'JetBrains Mono',monospace;font-size:.6rem">${r.contact||'—'}</td><td><span class="badge badge-ok">Confirmed</span></td></tr>`).join('');
+}
+
+function renderFAQ(){
+  const container=document.getElementById('faq-list');
+  if(!container) return;
+  container.innerHTML=VOTER_FAQ.map((item,i)=>`<div class="faq-item">
+    <button class="faq-q" onclick="toggleFAQ(${i},this)">
+      <span>${LANG==='tp'&&item.tp?item.tp:item.q}</span>
+      <span class="faq-arrow">▼</span>
+    </button>
+    <div class="faq-a" id="faq-a-${i}">${LANG==='tp'&&item.tpa?item.tpa:item.a}</div>
+  </div>`).join('');
+}
+function toggleFAQ(i,btn){
+  const answer=document.getElementById('faq-a-'+i);
+  if(!answer) return;
+  const isOpen=answer.classList.contains('show');
+  document.querySelectorAll('.faq-a').forEach(a=>a.classList.remove('show'));
+  document.querySelectorAll('.faq-q').forEach(b=>b.classList.remove('open'));
+  if(!isOpen){answer.classList.add('show');btn.classList.add('open')}
+}
+
+function renderILGs(){
+  const ilgs=DB.get('ilgs')||[];
+  const count=document.getElementById('ilg-count');if(count)count.textContent=ilgs.length;
+  const tbody=document.getElementById('ilg-table');
+  const empty=document.getElementById('ilg-empty');
+  if(!tbody) return;
+  if(!ilgs.length){tbody.innerHTML='';if(empty)empty.style.display='block';return}
+  if(empty)empty.style.display='none';
+  tbody.innerHTML=ilgs.slice().reverse().map(i=>`<tr><td><strong>${i.name}</strong></td><td>${i.district||'—'}</td><td>${i.ward||i.llg||'—'}</td><td style="font-family:'JetBrains Mono',monospace;font-size:.7rem">${i.file||'—'}</td><td><span class="badge badge-ok">${i.cert||'Registered'}</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:.6rem">${new Date(i.ts).toLocaleDateString()}</td><td style="font-family:'JetBrains Mono',monospace;font-size:.5rem;color:var(--verify)">${i.hash}</td></tr>`).join('');
+}
+
+function renderFrauds(){
+  const frauds=DB.get('frauds')||[];
+  const count=document.getElementById('fraud-count');if(count)count.textContent=frauds.length;
+  const hcases=document.getElementById('h-cases');if(hcases)hcases.textContent=frauds.length;
+  const tbody=document.getElementById('fraud-table');
+  const empty=document.getElementById('fraud-empty');
+  if(!tbody) return;
+  if(!frauds.length){tbody.innerHTML='';if(empty)empty.style.display='block';return}
+  if(empty)empty.style.display='none';
+  tbody.innerHTML=frauds.slice().reverse().map(f=>`<tr><td><strong>${f.location}</strong></td><td>${f.type}</td><td>${f.clan||'—'}</td><td style="font-family:'JetBrains Mono',monospace;font-size:.7rem">${f.date||new Date(f.ts).toLocaleDateString()}</td><td><span class="badge badge-bad">Filed</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:.6rem">${f.caseId}</td></tr>`).join('');
+}
+
+function renderMPHistory(){
+  const tbody=document.getElementById('mp-history-table');
+  if(!tbody) return;
+  const flagBadge={founding:'badge-founding',integrity:'badge-founding',gap:'badge-gap',unverified:'badge-bad',current:'badge-gap'};
+  const flagLabel={founding:'Founding Era',integrity:'Integrity Benchmark',gap:'Limited Record',unverified:'FOI Required',current:'Documented'};
+  tbody.innerHTML=MP_HISTORY.map(r=>`<tr style="${r.flag==='unverified'?'background:rgba(255,68,68,.04)':''}"><td style="font-family:'JetBrains Mono',monospace;font-size:.65rem">${r.term}</td><td style="font-family:'JetBrains Mono',monospace;font-size:.65rem">${r.years}</td><td><strong style="color:${r.flag==='unverified'?'var(--alert)':r.flag==='integrity'?'var(--gold)':'var(--white)'}">${r.mp}</strong></td><td style="font-family:'JetBrains Mono',monospace;font-size:.62rem">${r.party}</td><td style="font-size:.78rem">${r.note}</td><td><span class="badge ${flagBadge[r.flag]||'badge-gap'}">${flagLabel[r.flag]||'—'}</span></td></tr>`).join('');
+}
+
+function renderDDATable(){
+  const tbody=document.getElementById('dda-table');
+  if(!tbody) return;
+  const years=[['2007–08','Ano Pala'],['2008–09','Ano Pala'],['2009–10','Ano Pala'],['2010–11','Ano Pala'],['2011–12','Ano Pala'],['2012–13','Ano Pala'],['2013–14','Ano Pala'],['2014–15','Ano Pala'],['2015–16','Ano Pala'],['2016–17','Ano Pala'],['2017–18','Lekwa Gure'],['2018–19','Lekwa Gure'],['2019–20','Lekwa Gure'],['2020–21','Lekwa Gure'],['2021–22','Lekwa Gure'],['2022–23','Ano Pala'],['2023–24','Ano Pala']];
+  tbody.innerHTML=years.map(([yr,mp])=>`<tr><td>${yr}</td><td>K20,000,000+</td><td>${mp}</td><td style="color:var(--alert)">Not filed</td><td><span class="badge badge-bad">No acquittal</span></td></tr>`).join('');
+}
+
+function renderDemands(){
+  const demands=DB.get('demands')||[];
+  const today=new Date();
+  const overdue=demands.filter(d=>d.deadline&&new Date(d.deadline)<today&&d.status==='pending').length;
+  const pending=demands.filter(d=>d.status==='pending'&&(!d.deadline||new Date(d.deadline)>=today)).length;
+  const received=demands.filter(d=>d.status==='received').length;
+  const t=document.getElementById('dem-total');if(t)t.textContent=demands.length;
+  const o=document.getElementById('dem-overdue');if(o)o.textContent=overdue;
+  const p=document.getElementById('dem-pending');if(p)p.textContent=pending;
+  const r=document.getElementById('dem-received');if(r)r.textContent=received;
+  const hd=document.getElementById('h-demands');if(hd)hd.textContent=demands.length;
+  const list=document.getElementById('demands-list');
+  const empty=document.getElementById('demands-empty');
+  if(!list) return;
+  if(!demands.length){list.innerHTML='';if(empty)empty.style.display='block';return}
+  if(empty)empty.style.display='none';
+  list.innerHTML=demands.slice().reverse().map(d=>{
+    const isOverdue=d.deadline&&new Date(d.deadline)<today&&d.status==='pending';
+    const cls=d.status==='received'?'deadline-ok':(isOverdue?'deadline-bad':'deadline-warn');
+    return `<div class="demand-row" style="border-color:${isOverdue?'rgba(255,68,68,.2)':'var(--border)'}">
+      <div><div class="demand-ref">${d.ref}</div></div>
+      <div><div class="demand-title">${d.docs.slice(0,80)}${d.docs.length>80?'…':''}</div><div class="demand-meta">To: ${d.to||'—'} · Filed: ${d.date}</div></div>
+      <div class="${cls}" style="font-family:'JetBrains Mono',monospace;font-size:.6rem;text-align:right">${d.status==='received'?'✓ RECEIVED':(isOverdue?'⚠ OVERDUE':(d.deadline?'Due: '+d.deadline:'—'))}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderProposals(){
+  const proposals=DB.get('proposals')||[];
+  const voted=DB.get('voted')||{};
+  const today=new Date();
+  const dp=document.getElementById('dao-props');if(dp)dp.textContent=proposals.length;
+  const dv=document.getElementById('dao-votes');if(dv)dv.textContent=proposals.reduce((a,p)=>a+(p.yes||0)+(p.no||0),0);
+  const active=proposals.filter(p=>new Date(p.deadline)>=today).length;
+  const da=document.getElementById('dao-active');if(da)da.textContent=active;
+  const passed=proposals.filter(p=>(p.yes||0)>(p.no||0)&&new Date(p.deadline)<today).length;
+  const dpas=document.getElementById('dao-passed');if(dpas)dpas.textContent=passed;
+  const list=document.getElementById('proposal-list');
+  const empty=document.getElementById('proposal-empty');
+  if(!list) return;
+  if(!proposals.length){list.innerHTML='';if(empty)empty.style.display='block';return}
+  if(empty)empty.style.display='none';
+  list.innerHTML=proposals.slice().reverse().map((p,ri)=>{
+    const i=proposals.length-1-ri;
+    const tv=(p.yes||0)+(p.no||0)||1;
+    const yesPct=Math.round((p.yes||0)/tv*100);
+    const noPct=Math.round((p.no||0)/tv*100);
+    const isActive=new Date(p.deadline)>=today;
+    const hasVoted=voted[p.id];
+    return `<div class="prop-card">
+      <div class="prop-id">${p.id} · ${p.cat} · <span style="color:${isActive?'var(--verify)':'var(--muted)'}">${isActive?'Active':'Closed'}</span></div>
+      <div class="prop-title">${p.title}</div>
+      <div class="prop-desc">${p.desc}</div>
+      <div class="vote-bar"><div class="vote-yes-fill" style="width:${yesPct}%"></div><div class="vote-no-fill" style="width:${noPct}%"></div></div>
+      <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:.56rem;color:var(--muted);margin:.25rem 0 .625rem">
+        <span style="color:var(--verify)">Yes: ${p.yes||0} (${yesPct}%)</span><span style="color:var(--alert)">No: ${p.no||0} (${noPct}%)</span>
+      </div>
+      <div style="display:flex;gap:.5rem;align-items:center">
+        ${hasVoted?`<span style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--verify);padding:4px 10px;border:1px solid rgba(0,204,136,.2)">✓ Voted ${hasVoted.toUpperCase()}</span>`:(isActive?`<button class="btn-yes" onclick="vote(${i},'yes')">✓ YES</button><button class="btn-no" onclick="vote(${i},'no')">✗ NO</button>`:`<span style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--muted)">Voting closed</span>`)}
+        <span style="font-family:'JetBrains Mono',monospace;font-size:.56rem;color:var(--muted);margin-left:auto">Deadline: ${p.deadline}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderVault(){
+  const vault=DB.get('vault')||[];
+  const count=document.getElementById('vault-count');if(count)count.textContent=vault.length;
+  const hdocs=document.getElementById('h-docs');if(hdocs)hdocs.textContent=vault.length;
+  const list=document.getElementById('vault-list');
+  const empty=document.getElementById('vault-empty');
+  if(!list) return;
+  if(!vault.length){list.innerHTML='';if(empty)empty.style.display='block';return}
+  if(empty)empty.style.display='none';
+  const icons={PDF:'📄',DOCX:'📝',JPG:'🖼️',PNG:'🖼️',MP4:'🎥',MP3:'🎙️'};
+  list.innerHTML=vault.slice().reverse().map(v=>{
+    const ext=v.filename.split('.').pop().toUpperCase();
+    return `<div class="vault-entry"><div class="vault-ficon">${icons[ext]||'📁'}</div><div><div class="vault-fname">${v.title}</div><div class="vault-fmeta">${v.cat} · ${v.district||'—'} · ${v.size} · ${new Date(v.ts).toLocaleDateString()}</div>${v.desc?`<div style="font-size:.72rem;color:var(--muted);margin-top:.2rem">${v.desc.slice(0,80)}${v.desc.length>80?'…':''}</div>`:''}</div><div class="vault-fhash">✓ SEALED<br>${v.hash}<br>${v.ts.split('T')[0]}</div></div>`;
+  }).join('');
+}
+
+function renderEmergencyContacts(){
+  const homeEc=document.getElementById('home-ec');
+  const voterEc=document.getElementById('voter-ec');
+  const html=EMERGENCY_CONTACTS.map(c=>`<div class="ec-card"><div class="ec-name">${c.name}</div><div class="ec-full">${c.full}</div><div class="ec-role">${c.role}</div><div class="ec-contacts">${c.phone?`<div class="ec-contact">📞 ${c.phone}</div>`:''}${c.email?`<div class="ec-contact">✉ ${c.email}</div>`:''}${c.web?`<div class="ec-contact">🌐 ${c.web}</div>`:''}</div></div>`).join('');
+  if(homeEc) homeEc.innerHTML=html;
+  if(voterEc) voterEc.innerHTML=html;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// PRINT FUNCTIONS
+// ══════════════════════════════════════════════════════════════════
+function printReceipt(entry){
+  const content=`TANO — PNG LAND JUSTICE PLATFORM
+Rigo Think Tank (RFI) · Central Province
+════════════════════════════════════════
+REGISTRATION RECEIPT
+
+Name:         ${entry.name}
+District:     ${entry.district||'—'}
+LLG:          ${entry.llg||'—'}
+Ward:         ${entry.ward||'—'}
+Clan:         ${entry.clan||'—'}
+ILG:          ${entry.ilg||'—'}
+Date of Birth:${entry.dob||'—'}
+Eligible 2027:${entry.eligible2027?'YES — Ensure you are enrolled':'CHECK — Contact Ward Recorder'}
+Enrollment:   ${entry.enrolled||'—'}
+Petition:     ${entry.petition==='yes'?'SIGNED':'—'}
+
+Date Registered: ${new Date(entry.ts).toLocaleString()}
+Verification Hash: ${entry.hash}
+════════════════════════════════════════
+This receipt confirms permanent registration
+on the TANO platform. Keep this for your records.
+The verification hash proves your entry was not
+altered after this date.
+
+To check enrollment: PNGEC (675) 327 7441
+For land rights help: CELCOR (675) 321 7069
+For corruption complaints: ICAC (675) 325 2033`;
+  document.getElementById('print-content').innerHTML=content.split('\n').map(l=>`<div>${l||'&nbsp;'}</div>`).join('');
+  document.getElementById('print-area').style.display='block';
+}
+
+function printMemberList(){
+  const members=DB.get('members')||[];
+  const content=`TANO — COMMUNITY MEMBER REGISTER
+Rigo Think Tank (RFI) · ${new Date().toLocaleDateString()}
+════════════════════════════════════════\n`+members.map((m,i)=>`${String(i+1).padStart(3,'0')}. ${m.name} | ${m.district||'—'} | ${m.ward||m.llg||'—'} | ${m.eligible2027?'ELIGIBLE':'CHECK'} | ${m.hash}`).join('\n');
+  document.getElementById('print-content').innerHTML=content.split('\n').map(l=>`<div>${l||'&nbsp;'}</div>`).join('');
+  document.getElementById('print-area').style.display='block';
+}
+
+function printMPRecord(){
+  const content=`RIGO OPEN — COMPLETE PARLIAMENTARY RECORD 1972–2026
+Rigo Think Tank (RFI) · Central Province · ${new Date().toLocaleDateString()}
+════════════════════════════════════════\n`+MP_HISTORY.map(r=>`${r.term} | ${r.years} | ${r.mp} | ${r.party}\n   ${r.note}`).join('\n');
+  document.getElementById('print-content').innerHTML=content.split('\n').map(l=>`<div>${l||'&nbsp;'}</div>`).join('');
+  document.getElementById('print-area').style.display='block';
+}
+
+function printILGList(){
+  const ilgs=DB.get('ilgs')||[];
+  const content=`TANO — ILG REGISTRY
+Rigo Think Tank (RFI) · ${new Date().toLocaleDateString()}
+════════════════════════════════════════\n`+ilgs.map((i,idx)=>`${String(idx+1).padStart(3,'0')}. ${i.name} | ${i.district||'—'} | File: ${i.file||'—'} | ${i.cert||'—'} | ${i.hash}`).join('\n');
+  document.getElementById('print-content').innerHTML=content.split('\n').map(l=>`<div>${l||'&nbsp;'}</div>`).join('');
+  document.getElementById('print-area').style.display='block';
+}
+
+function printRecorders(){
+  const recorders=DB.get('recorders')||[];
+  const content=`RIGO DISTRICT — WARD RECORDER DIRECTORY
+Rigo Think Tank (RFI) · ${new Date().toLocaleDateString()}
+════════════════════════════════════════\n`+(recorders.length?recorders.map(r=>`${r.ward} (${r.llg||'—'}, ${r.district||'—'}): ${r.name} | ${r.contact||'No contact'}`).join('\n'):'No Ward Recorder data submitted yet.');
+  document.getElementById('print-content').innerHTML=content.split('\n').map(l=>`<div>${l||'&nbsp;'}</div>`).join('');
+  document.getElementById('print-area').style.display='block';
+}
+
+function printVaultIndex(){
+  const vault=DB.get('vault')||[];
+  const content=`TANO — EVIDENCE VAULT INDEX
+Rigo Think Tank (RFI) · ${new Date().toLocaleDateString()}
+════════════════════════════════════════\n`+vault.map((v,i)=>`${String(i+1).padStart(3,'0')}. ${v.title}\n   Category: ${v.cat}\n   Clan/ILG: ${v.clan||'—'}\n   Sealed: ${new Date(v.ts).toLocaleDateString()}\n   Hash: ${v.hash}`).join('\n\n');
+  document.getElementById('print-content').innerHTML=content.split('\n').map(l=>`<div>${l||'&nbsp;'}</div>`).join('');
+  document.getElementById('print-area').style.display='block';
+}
+
+// ══════════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════════
+function refreshAll(){
+  renderMembers();
+  renderWards();
+  renderAnomalies();
+  renderRecorders();
+  renderFAQ();
+  renderILGs();
+  renderFrauds();
+  renderMPHistory();
+  renderDDATable();
+  renderDemands();
+  renderProposals();
+  renderVault();
+  renderEmergencyContacts();
+}
+
+initAllDistrictDropdowns();
+refreshAll();
+</script>
+</body>
+</html>
